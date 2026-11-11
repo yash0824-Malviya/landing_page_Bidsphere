@@ -1,5 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronRight, ShieldCheck, Sparkles, PhoneCall } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Menu, 
+  X, 
+  ChevronDown, 
+  Layers, 
+  Users, 
+  ShieldCheck, 
+  Sparkles, 
+  Workflow, 
+  LayoutDashboard, 
+  ArrowRight
+} from 'lucide-react';
 
 interface NavbarProps {
   onRequestDemo: () => void;
@@ -8,145 +19,672 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onRequestDemo }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [mobileExpandedSection, setMobileExpandedSection] = useState<string | null>(null);
+
+  const dropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { label: 'Platform', href: '#platform' },
-    { label: 'Modules', href: '#modules' },
-    { label: 'Lifecycle', href: '#lifecycle' },
-    { label: 'AI Intelligence', href: '#ai-intelligence' },
-    { label: 'Roles & Collaboration', href: '#roles' },
-    { label: 'Product Showcase', href: '#showcase' },
-    { label: 'About Netlink', href: '#about-netlink' },
-    { label: 'Contact', href: '#contact' },
-  ];
+  // Close dropdown on click outside or escape key
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (navContainerRef.current && !navContainerRef.current.contains(event.target as Node)) {
+        setActiveDropdown(null);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setActiveDropdown(null);
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  const handleMouseEnter = (dropdownName: string) => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+      dropdownTimeoutRef.current = null;
+    }
+    setActiveDropdown(dropdownName);
+  };
+
+  const handleMouseLeave = () => {
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 150);
+  };
+
+  const handleDropdownToggle = (dropdownName: string) => {
+    setActiveDropdown((prev) => (prev === dropdownName ? null : dropdownName));
+  };
+
+  const handleNavLinkClick = () => {
+    setActiveDropdown(null);
+    setMobileMenuOpen(false);
+  };
+
+  const toggleMobileSection = (section: string) => {
+    setMobileExpandedSection((prev) => (prev === section ? null : section));
+  };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      ref={navContainerRef}
+      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-200 ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200/80 py-3'
-          : 'bg-white/90 backdrop-blur-sm border-b border-slate-100 py-4'
+          ? 'bg-white/95 backdrop-blur-md shadow-[0_2px_12px_rgba(15,27,54,0.06)] border-b border-slate-200/90'
+          : 'bg-white border-b border-slate-200/70 shadow-[0_1px_3px_rgba(15,27,54,0.03)]'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          {/* Left: Netlink Logo & BidSphere Product Branding */}
-          <a href="#" className="flex items-center space-x-3 group">
-            <div className="flex items-center">
-              <img
-                src="/netlink-logo.png"
-                alt="Netlink Software Logo"
-                className="h-8 md:h-9 w-auto object-contain"
-                onError={(e) => {
-                  // Fallback if image fails to load
-                  (e.target as HTMLElement).style.display = 'none';
-                }}
-              />
-              <div className="h-6 w-px bg-slate-300 mx-3 hidden sm:block"></div>
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-xl md:text-2xl tracking-tight text-navy">
-                  Bid<span className="text-primary-blue">Sphere</span>
-                </span>
-                <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold tracking-wide bg-blue-50 text-primary-blue border border-blue-200 uppercase">
-                  Enterprise
-                </span>
-              </div>
-              <span className="text-[10px] tracking-wider text-slate-500 font-medium -mt-1 hidden sm:block">
-                BY NETLINK SOFTWARE
-              </span>
-            </div>
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-[78px] flex items-center justify-between">
+        {/* =========================================================================
+            1. BRANDING AREA
+            - Netlink logo on the left
+            - BidSphere in clean, bold typography
+            - "BY NETLINK SOFTWARE" underneath the product name
+            - Removed unnecessary ENTERPRISE badge
+            - Balanced spacing
+            ========================================================================= */}
+        <a 
+          href="#" 
+          className="flex items-center gap-3.5 group select-none flex-shrink-0"
+          aria-label="BidSphere by Netlink Software Home"
+        >
+          <img
+            src="/netlink-logo.png"
+            alt="Netlink Software Logo"
+            className="h-8 sm:h-9 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+            onError={(e) => {
+              (e.target as HTMLElement).style.display = 'none';
+            }}
+          />
+          <div className="h-7 w-px bg-slate-200 hidden sm:block" aria-hidden="true" />
+          <div className="flex flex-col justify-center">
+            <span className="font-bold text-xl sm:text-[22px] leading-tight tracking-tight text-[#0F1B36] font-sans">
+              Bid<span className="text-[#146CE8]">Sphere</span>
+            </span>
+            <span className="text-[9px] font-semibold tracking-[0.14em] text-slate-500 uppercase leading-none mt-0.5">
+              BY NETLINK SOFTWARE
+            </span>
+          </div>
+        </a>
+
+        {/* =========================================================================
+            2. DESKTOP NAVIGATION
+            Single-line structure on standard desktop screens:
+            - Platform
+            - Solutions (Dropdown: Modules & Role-based workspaces)
+            - Procurement Lifecycle
+            - AI Intelligence
+            - Resources (Dropdown: UI Showcase, Security, Workflow)
+            - About
+            - Contact
+            ========================================================================= */}
+        <nav 
+          className="hidden lg:flex items-center gap-1 xl:gap-2 whitespace-nowrap"
+          aria-label="Main Navigation"
+        >
+          {/* Item 1: Platform */}
+          <a
+            href="#platform"
+            onClick={handleNavLinkClick}
+            className="px-2.5 xl:px-3.5 py-2 text-[13px] xl:text-sm font-medium text-[#0F1B36] hover:text-[#146CE8] hover:bg-slate-50/80 rounded-md transition-colors"
+          >
+            Platform
           </a>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center space-x-1 lg:space-x-2">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="px-3 py-1.5 text-xs lg:text-sm font-medium text-slate-700 hover:text-primary-blue hover:bg-slate-50 rounded-md transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-
-          {/* Right Action CTAs */}
-          <div className="hidden md:flex items-center space-x-3">
-            <a
-              href="#platform"
-              className="px-3.5 py-2 text-xs lg:text-sm font-semibold text-slate-700 hover:text-navy transition-colors rounded-lg hover:bg-slate-100"
-            >
-              Explore Platform
-            </a>
-            <button
-              onClick={onRequestDemo}
-              className="inline-flex items-center justify-center px-4 py-2 text-xs lg:text-sm font-semibold text-white bg-primary-blue hover:bg-primary-blue-600 active:scale-[0.98] rounded-lg shadow-sm hover:shadow transition-all group"
-            >
-              <span>Request a Demo</span>
-              <ChevronRight className="ml-1.5 w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            </button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="flex items-center md:hidden space-x-2">
-            <button
-              onClick={onRequestDemo}
-              className="px-3 py-1.5 text-xs font-semibold text-white bg-primary-blue rounded-md"
-            >
-              Demo
-            </button>
+          {/* Item 2: Solutions (Dropdown) */}
+          <div 
+            className="relative"
+            onMouseEnter={() => handleMouseEnter('solutions')}
+            onMouseLeave={handleMouseLeave}
+          >
             <button
               type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-md text-slate-700 hover:text-navy hover:bg-slate-100 focus:outline-none"
-              aria-label="Toggle Navigation Menu"
+              onClick={() => handleDropdownToggle('solutions')}
+              aria-expanded={activeDropdown === 'solutions'}
+              aria-haspopup="true"
+              className={`inline-flex items-center gap-1 px-2.5 xl:px-3.5 py-2 text-[13px] xl:text-sm font-medium rounded-md transition-colors ${
+                activeDropdown === 'solutions'
+                  ? 'text-[#146CE8] bg-blue-50/60'
+                  : 'text-[#0F1B36] hover:text-[#146CE8] hover:bg-slate-50/80'
+              }`}
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              <span>Solutions</span>
+              <ChevronDown 
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  activeDropdown === 'solutions' ? 'rotate-180 text-[#146CE8]' : 'text-slate-400'
+                }`} 
+              />
             </button>
+
+            {/* Solutions Dropdown Menu */}
+            {activeDropdown === 'solutions' && (
+              <div 
+                className="absolute top-full left-1/2 -translate-x-1/2 pt-2.5 w-[560px] animate-in fade-in slide-in-from-top-1 duration-150 z-50"
+                onMouseEnter={() => handleMouseEnter('solutions')}
+                onMouseLeave={handleMouseLeave}
+              >
+                <div className="bg-white rounded-xl shadow-[0_12px_36px_-4px_rgba(15,27,54,0.12)] border border-slate-100 p-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Left Column: Core Modules */}
+                    <div>
+                      <div className="flex items-center gap-1.5 pb-2.5 mb-2 border-b border-slate-100">
+                        <Layers className="w-3.5 h-3.5 text-[#146CE8]" />
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                          Procurement Modules
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <a
+                          href="#modules"
+                          onClick={handleNavLinkClick}
+                          className="group block p-2 rounded-lg hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="text-xs font-semibold text-[#0F1B36] group-hover:text-[#146CE8] transition-colors">
+                            E-Procurement & PR Management
+                          </div>
+                          <div className="text-[11px] text-slate-500 line-clamp-1">
+                            Indent creation, zero-head approval paths & catalogs
+                          </div>
+                        </a>
+                        <a
+                          href="#modules"
+                          onClick={handleNavLinkClick}
+                          className="group block p-2 rounded-lg hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="text-xs font-semibold text-[#0F1B36] group-hover:text-[#146CE8] transition-colors">
+                            Sealed RFQ & Tendering
+                          </div>
+                          <div className="text-[11px] text-slate-500 line-clamp-1">
+                            Tamper-proof encrypted bid submission & opening
+                          </div>
+                        </a>
+                        <a
+                          href="#modules"
+                          onClick={handleNavLinkClick}
+                          className="group block p-2 rounded-lg hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="text-xs font-semibold text-[#0F1B36] group-hover:text-[#146CE8] transition-colors">
+                            Dynamic Reverse Auctions
+                          </div>
+                          <div className="text-[11px] text-slate-500 line-clamp-1">
+                            Real-time supplier pricing showdowns with overtime
+                          </div>
+                        </a>
+                        <a
+                          href="#modules"
+                          onClick={handleNavLinkClick}
+                          className="group block p-2 rounded-lg hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="text-xs font-semibold text-[#0F1B36] group-hover:text-[#146CE8] transition-colors">
+                            Contract Lifecycle (CLM) & E-Sign
+                          </div>
+                          <div className="text-[11px] text-slate-500 line-clamp-1">
+                            Dual cryptographic digital sign & clause management
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Right Column: Roles & Workspaces */}
+                    <div>
+                      <div className="flex items-center gap-1.5 pb-2.5 mb-2 border-b border-slate-100">
+                        <Users className="w-3.5 h-3.5 text-[#146CE8]" />
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                          Role Workspaces
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <a
+                          href="#roles"
+                          onClick={handleNavLinkClick}
+                          className="group block p-2 rounded-lg hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="text-xs font-semibold text-[#0F1B36] group-hover:text-[#146CE8] transition-colors">
+                            Sourcing & Procurement Leads
+                          </div>
+                          <div className="text-[11px] text-slate-500 line-clamp-1">
+                            Commercial evaluations, live auctions & PO creation
+                          </div>
+                        </a>
+                        <a
+                          href="#roles"
+                          onClick={handleNavLinkClick}
+                          className="group block p-2 rounded-lg hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="text-xs font-semibold text-[#0F1B36] group-hover:text-[#146CE8] transition-colors">
+                            Department Requisitioners
+                          </div>
+                          <div className="text-[11px] text-slate-500 line-clamp-1">
+                            Simple indent creation & budget validation
+                          </div>
+                        </a>
+                        <a
+                          href="#roles"
+                          onClick={handleNavLinkClick}
+                          className="group block p-2 rounded-lg hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="text-xs font-semibold text-[#0F1B36] group-hover:text-[#146CE8] transition-colors">
+                            Finance & Audit Controllers
+                          </div>
+                          <div className="text-[11px] text-slate-500 line-clamp-1">
+                            3-way PO-GRN-Invoice matching & audit logs
+                          </div>
+                        </a>
+                        <a
+                          href="#roles"
+                          onClick={handleNavLinkClick}
+                          className="group block p-2 rounded-lg hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="text-xs font-semibold text-[#0F1B36] group-hover:text-[#146CE8] transition-colors">
+                            External Vendors & Suppliers
+                          </div>
+                          <div className="text-[11px] text-slate-500 line-clamp-1">
+                            Tokenized quotation portal, reverse bids & e-sign
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Dropdown Footer Link */}
+                  <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <span className="text-slate-500">
+                      Explore all 10 unified enterprise modules
+                    </span>
+                    <a
+                      href="#modules"
+                      onClick={handleNavLinkClick}
+                      className="inline-flex items-center gap-1 font-semibold text-[#146CE8] hover:text-[#0D56C0] transition-colors"
+                    >
+                      <span>View All Modules</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
+
+          {/* Item 3: Procurement Lifecycle */}
+          <a
+            href="#lifecycle"
+            onClick={handleNavLinkClick}
+            className="px-2.5 xl:px-3.5 py-2 text-[13px] xl:text-sm font-medium text-[#0F1B36] hover:text-[#146CE8] hover:bg-slate-50/80 rounded-md transition-colors"
+          >
+            Procurement Lifecycle
+          </a>
+
+          {/* Item 4: AI Intelligence */}
+          <a
+            href="#ai-intelligence"
+            onClick={handleNavLinkClick}
+            className="inline-flex items-center gap-1 px-2.5 xl:px-3.5 py-2 text-[13px] xl:text-sm font-medium text-[#0F1B36] hover:text-[#146CE8] hover:bg-slate-50/80 rounded-md transition-colors group"
+          >
+            <span>AI Intelligence</span>
+            <Sparkles className="w-3 h-3 text-[#146CE8] opacity-75 group-hover:opacity-100 transition-opacity" />
+          </a>
+
+          {/* Item 5: Resources (Dropdown) */}
+          <div 
+            className="relative"
+            onMouseEnter={() => handleMouseEnter('resources')}
+            onMouseLeave={handleMouseLeave}
+          >
+            <button
+              type="button"
+              onClick={() => handleDropdownToggle('resources')}
+              aria-expanded={activeDropdown === 'resources'}
+              aria-haspopup="true"
+              className={`inline-flex items-center gap-1 px-2.5 xl:px-3.5 py-2 text-[13px] xl:text-sm font-medium rounded-md transition-colors ${
+                activeDropdown === 'resources'
+                  ? 'text-[#146CE8] bg-blue-50/60'
+                  : 'text-[#0F1B36] hover:text-[#146CE8] hover:bg-slate-50/80'
+              }`}
+            >
+              <span>Resources</span>
+              <ChevronDown 
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  activeDropdown === 'resources' ? 'rotate-180 text-[#146CE8]' : 'text-slate-400'
+                }`} 
+              />
+            </button>
+
+            {/* Resources Dropdown Menu */}
+            {activeDropdown === 'resources' && (
+              <div 
+                className="absolute top-full left-1/2 -translate-x-1/2 pt-2.5 w-[320px] animate-in fade-in slide-in-from-top-1 duration-150 z-50"
+                onMouseEnter={() => handleMouseEnter('resources')}
+                onMouseLeave={handleMouseLeave}
+              >
+                <div className="bg-white rounded-xl shadow-[0_12px_36px_-4px_rgba(15,27,54,0.12)] border border-slate-100 p-3 space-y-1">
+                  <a
+                    href="#showcase"
+                    onClick={handleNavLinkClick}
+                    className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition-colors group"
+                  >
+                    <div className="w-7 h-7 rounded-md bg-blue-50 flex items-center justify-center flex-shrink-0 text-[#146CE8] mt-0.5">
+                      <LayoutDashboard className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-[#0F1B36] group-hover:text-[#146CE8] transition-colors">
+                        Product UI Tour
+                      </div>
+                      <div className="text-[11px] text-slate-500">
+                        Live screenshots of supplier & admin portals
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    href="#lifecycle"
+                    onClick={handleNavLinkClick}
+                    className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition-colors group"
+                  >
+                    <div className="w-7 h-7 rounded-md bg-blue-50 flex items-center justify-center flex-shrink-0 text-[#146CE8] mt-0.5">
+                      <Workflow className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-[#0F1B36] group-hover:text-[#146CE8] transition-colors">
+                        17-Step Lifecycle Diagram
+                      </div>
+                      <div className="text-[11px] text-slate-500">
+                        End-to-end zero-head procurement journey
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    href="#platform"
+                    onClick={handleNavLinkClick}
+                    className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition-colors group"
+                  >
+                    <div className="w-7 h-7 rounded-md bg-blue-50 flex items-center justify-center flex-shrink-0 text-[#146CE8] mt-0.5">
+                      <ShieldCheck className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-[#0F1B36] group-hover:text-[#146CE8] transition-colors">
+                        Security & Governance
+                      </div>
+                      <div className="text-[11px] text-slate-500">
+                        AES-256 encryption, SOC-2 & SHA-256 audit logs
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Item 6: About */}
+          <a
+            href="#about-netlink"
+            onClick={handleNavLinkClick}
+            className="px-2.5 xl:px-3.5 py-2 text-[13px] xl:text-sm font-medium text-[#0F1B36] hover:text-[#146CE8] hover:bg-slate-50/80 rounded-md transition-colors"
+          >
+            About
+          </a>
+
+          {/* Item 7: Contact */}
+          <a
+            href="#contact"
+            onClick={handleNavLinkClick}
+            className="px-2.5 xl:px-3.5 py-2 text-[13px] xl:text-sm font-medium text-[#0F1B36] hover:text-[#146CE8] hover:bg-slate-50/80 rounded-md transition-colors"
+          >
+            Contact
+          </a>
+        </nav>
+
+        {/* =========================================================================
+            3. PRIMARY CTA BUTTON (DESKTOP)
+            - Keep "Request a Demo" as primary CTA
+            - Corporate blue #146CE8
+            - Medium-sized button
+            - Consistent height with navigation (h-10)
+            - Subtle hover animation
+            - No unnecessary large arrows or oversized padding
+            ========================================================================= */}
+        <div className="hidden lg:flex items-center flex-shrink-0">
+          <button
+            type="button"
+            onClick={onRequestDemo}
+            className="inline-flex items-center justify-center h-10 px-5 text-sm font-semibold text-white bg-[#146CE8] hover:bg-[#0D56C0] active:scale-[0.98] rounded-lg shadow-sm hover:shadow transition-all duration-200 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[#146CE8]/40 focus:ring-offset-2"
+          >
+            Request a Demo
+          </button>
+        </div>
+
+        {/* =========================================================================
+            TABLET & MOBILE CONTROLS
+            - Visible on screens < lg
+            - Direct CTA for fast conversion
+            - Hamburger menu button
+            ========================================================================= */}
+        <div className="flex items-center lg:hidden gap-2.5">
+          <button
+            type="button"
+            onClick={onRequestDemo}
+            className="inline-flex items-center justify-center h-9 px-3.5 text-xs font-semibold text-white bg-[#146CE8] hover:bg-[#0D56C0] active:scale-[0.98] rounded-md shadow-sm transition-all whitespace-nowrap"
+          >
+            Request a Demo
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="inline-flex items-center justify-center p-2 rounded-md text-[#0F1B36] hover:text-[#146CE8] hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-[#146CE8]/40"
+            aria-label="Toggle Mobile Menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* =========================================================================
+          MOBILE / TABLET DRAWER MENU
+          - Clean slide-down accordion drawer
+          - Every navigation route preserved
+          - Primary CTA inside navigation
+          ========================================================================= */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 bg-white/98 backdrop-blur-md px-4 pt-3 pb-6 space-y-2 shadow-lg animate-in slide-in-from-top-2">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-800 hover:bg-blue-50 hover:text-primary-blue transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
-          <div className="pt-4 border-t border-slate-100 flex flex-col space-y-2">
+        <div className="lg:hidden border-t border-slate-200/80 bg-white/98 backdrop-blur-md px-4 pt-3 pb-6 shadow-xl max-h-[calc(100vh-80px)] overflow-y-auto animate-in slide-in-from-top-2 duration-200">
+          <div className="flex flex-col space-y-1">
+            {/* Mobile Item 1: Platform */}
             <a
               href="#platform"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center py-2.5 rounded-lg text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200"
+              onClick={handleNavLinkClick}
+              className="px-3 py-2.5 rounded-lg text-sm font-semibold text-[#0F1B36] hover:bg-blue-50 hover:text-[#146CE8] transition-colors"
             >
-              Explore Platform
+              Platform
             </a>
+
+            {/* Mobile Item 2: Solutions (Accordion) */}
+            <div>
+              <button
+                type="button"
+                onClick={() => toggleMobileSection('solutions')}
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold text-[#0F1B36] hover:bg-blue-50 hover:text-[#146CE8] transition-colors"
+              >
+                <span>Solutions</span>
+                <ChevronDown 
+                  className={`w-4 h-4 transition-transform duration-200 text-slate-400 ${
+                    mobileExpandedSection === 'solutions' ? 'rotate-180 text-[#146CE8]' : ''
+                  }`} 
+                />
+              </button>
+              {mobileExpandedSection === 'solutions' && (
+                <div className="pl-4 pr-2 py-1 space-y-1 bg-slate-50/70 rounded-lg my-1">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2 pt-1.5">
+                    Core Modules
+                  </div>
+                  <a
+                    href="#modules"
+                    onClick={handleNavLinkClick}
+                    className="block px-2 py-1.5 text-xs font-medium text-slate-700 hover:text-[#146CE8] transition-colors"
+                  >
+                    E-Procurement & PR Management
+                  </a>
+                  <a
+                    href="#modules"
+                    onClick={handleNavLinkClick}
+                    className="block px-2 py-1.5 text-xs font-medium text-slate-700 hover:text-[#146CE8] transition-colors"
+                  >
+                    Sealed RFQ & Tendering
+                  </a>
+                  <a
+                    href="#modules"
+                    onClick={handleNavLinkClick}
+                    className="block px-2 py-1.5 text-xs font-medium text-slate-700 hover:text-[#146CE8] transition-colors"
+                  >
+                    Dynamic Reverse Auctions
+                  </a>
+                  <a
+                    href="#modules"
+                    onClick={handleNavLinkClick}
+                    className="block px-2 py-1.5 text-xs font-medium text-slate-700 hover:text-[#146CE8] transition-colors"
+                  >
+                    Contract Lifecycle (CLM) & E-Sign
+                  </a>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2 pt-2">
+                    Role Workspaces
+                  </div>
+                  <a
+                    href="#roles"
+                    onClick={handleNavLinkClick}
+                    className="block px-2 py-1.5 text-xs font-medium text-slate-700 hover:text-[#146CE8] transition-colors"
+                  >
+                    Sourcing & Procurement Leads
+                  </a>
+                  <a
+                    href="#roles"
+                    onClick={handleNavLinkClick}
+                    className="block px-2 py-1.5 text-xs font-medium text-slate-700 hover:text-[#146CE8] transition-colors"
+                  >
+                    Department Requisitioners
+                  </a>
+                  <a
+                    href="#roles"
+                    onClick={handleNavLinkClick}
+                    className="block px-2 py-1.5 text-xs font-medium text-slate-700 hover:text-[#146CE8] transition-colors"
+                  >
+                    Finance & Audit Controllers
+                  </a>
+                  <a
+                    href="#roles"
+                    onClick={handleNavLinkClick}
+                    className="block px-2 py-1.5 text-xs font-medium text-slate-700 hover:text-[#146CE8] transition-colors"
+                  >
+                    External Vendors & Suppliers
+                  </a>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Item 3: Procurement Lifecycle */}
+            <a
+              href="#lifecycle"
+              onClick={handleNavLinkClick}
+              className="px-3 py-2.5 rounded-lg text-sm font-semibold text-[#0F1B36] hover:bg-blue-50 hover:text-[#146CE8] transition-colors"
+            >
+              Procurement Lifecycle
+            </a>
+
+            {/* Mobile Item 4: AI Intelligence */}
+            <a
+              href="#ai-intelligence"
+              onClick={handleNavLinkClick}
+              className="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold text-[#0F1B36] hover:bg-blue-50 hover:text-[#146CE8] transition-colors"
+            >
+              <span>AI Intelligence</span>
+              <Sparkles className="w-3.5 h-3.5 text-[#146CE8]" />
+            </a>
+
+            {/* Mobile Item 5: Resources (Accordion) */}
+            <div>
+              <button
+                type="button"
+                onClick={() => toggleMobileSection('resources')}
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold text-[#0F1B36] hover:bg-blue-50 hover:text-[#146CE8] transition-colors"
+              >
+                <span>Resources</span>
+                <ChevronDown 
+                  className={`w-4 h-4 transition-transform duration-200 text-slate-400 ${
+                    mobileExpandedSection === 'resources' ? 'rotate-180 text-[#146CE8]' : ''
+                  }`} 
+                />
+              </button>
+              {mobileExpandedSection === 'resources' && (
+                <div className="pl-4 pr-2 py-1 space-y-1 bg-slate-50/70 rounded-lg my-1">
+                  <a
+                    href="#showcase"
+                    onClick={handleNavLinkClick}
+                    className="block px-2 py-1.5 text-xs font-medium text-slate-700 hover:text-[#146CE8] transition-colors"
+                  >
+                    Product UI Tour & Screenshots
+                  </a>
+                  <a
+                    href="#lifecycle"
+                    onClick={handleNavLinkClick}
+                    className="block px-2 py-1.5 text-xs font-medium text-slate-700 hover:text-[#146CE8] transition-colors"
+                  >
+                    17-Step Procurement Journey
+                  </a>
+                  <a
+                    href="#platform"
+                    onClick={handleNavLinkClick}
+                    className="block px-2 py-1.5 text-xs font-medium text-slate-700 hover:text-[#146CE8] transition-colors"
+                  >
+                    Security, Encryption & Compliance
+                  </a>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Item 6: About */}
+            <a
+              href="#about-netlink"
+              onClick={handleNavLinkClick}
+              className="px-3 py-2.5 rounded-lg text-sm font-semibold text-[#0F1B36] hover:bg-blue-50 hover:text-[#146CE8] transition-colors"
+            >
+              About Netlink
+            </a>
+
+            {/* Mobile Item 7: Contact */}
+            <a
+              href="#contact"
+              onClick={handleNavLinkClick}
+              className="px-3 py-2.5 rounded-lg text-sm font-semibold text-[#0F1B36] hover:bg-blue-50 hover:text-[#146CE8] transition-colors"
+            >
+              Contact
+            </a>
+          </div>
+
+          {/* Primary CTA in Mobile Drawer */}
+          <div className="pt-4 mt-3 border-t border-slate-100 flex flex-col gap-2">
             <button
+              type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 onRequestDemo();
               }}
-              className="w-full py-2.5 rounded-lg text-sm font-semibold text-white bg-primary-blue hover:bg-primary-blue-600 shadow-sm flex items-center justify-center space-x-1"
+              className="w-full h-11 rounded-lg text-sm font-semibold text-white bg-[#146CE8] hover:bg-[#0D56C0] active:scale-[0.98] shadow-sm transition-all flex items-center justify-center"
             >
-              <span>Request a Demo</span>
-              <ChevronRight className="w-4 h-4" />
+              Request a Demo
             </button>
           </div>
         </div>
@@ -154,4 +692,3 @@ export const Navbar: React.FC<NavbarProps> = ({ onRequestDemo }) => {
     </header>
   );
 };
-
