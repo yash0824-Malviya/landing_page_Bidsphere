@@ -50,6 +50,14 @@ export interface ProductScreenshot {
   imageSrc: string;
   highlights: string[];
   badge: string;
+  subViews?: {
+    id: string;
+    label: string;
+    imageSrc: string;
+    title?: string;
+    description?: string;
+    highlights?: string[];
+  }[];
 }
 
 export interface SupplierEvaluationDemo {

@@ -38,7 +38,33 @@ export const productScreenshots: ProductScreenshot[] = [
       'Dual-party non-repudiation e-signing',
       'Perpetual contract repository archiving'
     ],
-    badge: 'CLM & E-Sign'
+    badge: 'CLM & E-Sign',
+    subViews: [
+      {
+        id: 'contract-acceptance',
+        label: '01 – Contract Acceptance',
+        title: 'Review & Accept Contract (CON-2026-000001)',
+        imageSrc: '/supplier-contract-acceptance-ready.png',
+        description: 'Seamlessly links awarded RFQs to legally binding agreements with dual cryptographic e-signatures and clause audit trails.',
+        highlights: [
+          'Direct RFQ-to-Contract clause generation',
+          'Dual-party non-repudiation e-signing',
+          'Perpetual contract repository archiving'
+        ]
+      },
+      {
+        id: 'document-verification',
+        label: '02 – Supplier Document Verification',
+        title: 'Supplier Document Verification & SHA-256 Integrity (PUR-SQTN-2026-00353)',
+        imageSrc: '/supplier-document-verification.jpg',
+        description: 'Verify supplier Terms & Conditions, Compliance Warranties, and Insurance Certificates with SHA-256 cryptographic document integrity and embedded PDF viewing.',
+        highlights: [
+          'SHA-256 cryptographic document integrity verification',
+          'Automated 3/3 compliance verification check (T&Cs, Warranty, Insurance)',
+          'Embedded interactive PDF viewer with one-click signing workflow'
+        ]
+      }
+    ]
   },
   {
     id: 'enterprise-contract-pdf',
