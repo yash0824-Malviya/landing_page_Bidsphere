@@ -16,7 +16,7 @@ import {
 import { ScrollReveal } from './common/MotionComponents';
 import { fadeInUp, staggerContainer } from '../animations/variants';
 
-export const AiIntelligenceSection: React.FC = () => {
+export const AiIntelligenceSection = () => {
   // Configurable weights matching BidSphere default specification
   const [weights, setWeights] = useState({
     price: 35,

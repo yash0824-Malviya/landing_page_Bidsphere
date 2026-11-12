@@ -7,7 +7,7 @@ interface DemoModalProps {
   onClose: () => void;
 }
 
-export const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
+export const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',

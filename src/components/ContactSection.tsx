@@ -17,7 +17,7 @@ interface ContactSectionProps {
   onRequestDemo: () => void;
 }
 
-export const ContactSection: React.FC<ContactSectionProps> = ({ onRequestDemo }) => {
+export const ContactSection = ({ onRequestDemo }: ContactSectionProps) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',

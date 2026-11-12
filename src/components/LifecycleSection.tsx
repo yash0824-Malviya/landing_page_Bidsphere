@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { ScrollReveal } from './common/MotionComponents';
 
-export const LifecycleSection: React.FC = () => {
+export const LifecycleSection = () => {
   const [activeStepIndex, setActiveStepIndex] = useState<number>(7); // Default on Executive Approval / Zero Dept Head
   const [phaseFilter, setPhaseFilter] = useState<'all' | 'intake' | 'sourcing' | 'fulfillment'>('all');
 
@@ -159,15 +159,14 @@ export const LifecycleSection: React.FC = () => {
                           : isPast
                           ? 'bg-emerald-500 text-white'
                           : 'bg-white text-slate-600 border-2 border-slate-300 group-hover:border-primary-blue'
-                      }`}
+                        }`}
                     >
                       {isPast ? <CheckCircle className="w-5 h-5" /> : step.step}
                     </motion.div>
 
                     <span
-                      className={`text-[11px] font-semibold mt-2.5 max-w-[85px] line-clamp-2 leading-tight ${
-                        isActive ? 'text-primary-blue font-bold' : 'text-slate-600 group-hover:text-navy'
-                      }`}
+                      className={`text-[11px] font-semibold mt-2.5 max-w-[85px] line-clamp-2 leading-tight ${isActive ? 'text-primary-blue font-bold' : 'text-slate-600 group-hover:text-navy'
+                        }`}
                     >
                       {step.title}
                     </span>

@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { ScrollReveal, AnimatedCounter } from './common/MotionComponents';
 
-export const AboutNetlink: React.FC = () => {
+export const AboutNetlink = () => {
   const credentials = [
     { label: 'Years of Engineering Excellence', value: '25+', numeric: '25', isNum: true, subtext: 'Established global enterprise partner' },
     { label: 'Global Delivery Centers', value: 'Global Footprint', numeric: '', isNum: false, subtext: 'Serving Fortune 500 & mid-market leaders' },

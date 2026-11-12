@@ -24,7 +24,7 @@ import {
 import { ScrollReveal, AnimatedCounter } from './common/MotionComponents';
 import { fadeInUp, staggerContainer } from '../animations/variants';
 
-export const CommandCenterPreview: React.FC = () => {
+export const CommandCenterPreview = () => {
   const [activeProduct, setActiveProduct] = useState<'bidsphere' | 'project-mgmt'>('bidsphere');
   const [timeRange, setTimeRange] = useState<'30d' | 'quarter' | 'ytd'>('ytd');
 

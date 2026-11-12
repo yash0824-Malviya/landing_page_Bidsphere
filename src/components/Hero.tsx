@@ -24,7 +24,7 @@ interface HeroProps {
   onRequestDemo: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onRequestDemo }) => {
+export const Hero = ({ onRequestDemo }: HeroProps) => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'ai' | 'supplier' | 'clm' | 'project'>('dashboard');
 
   return (

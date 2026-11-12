@@ -18,7 +18,7 @@ interface NavbarProps {
   onRequestDemo: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onRequestDemo }) => {
+export const Navbar = ({ onRequestDemo }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);

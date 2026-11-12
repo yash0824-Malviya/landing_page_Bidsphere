@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { productScreenshots } from '../data/screenshotsData';
-import { 
-  Maximize2, 
-  ExternalLink, 
-  ShieldCheck, 
-  Sparkles, 
-  CheckCircle2, 
-  Laptop, 
-  Layers, 
+import {
+  Maximize2,
+  ExternalLink,
+  ShieldCheck,
+  Sparkles,
+  CheckCircle2,
+  Laptop,
+  Layers,
   FileText,
   X,
   ChevronLeft,
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { ScrollReveal } from './common/MotionComponents';
 
-export const ScreenshotsShowcase: React.FC = () => {
+export const ScreenshotsShowcase = () => {
   const [selectedShotIndex, setSelectedShotIndex] = useState<number>(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
 
@@ -75,11 +75,10 @@ export const ScreenshotsShowcase: React.FC = () => {
               <button
                 key={shot.id}
                 onClick={() => setSelectedShotIndex(idx)}
-                className={`relative px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
-                  isSelected
+                className={`relative px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${isSelected
                     ? 'text-white'
                     : 'bg-slate-800/80 hover:bg-slate-800 text-slate-300 border border-slate-700/80'
-                }`}
+                  }`}
               >
                 {isSelected && (
                   <motion.div
@@ -143,7 +142,7 @@ export const ScreenshotsShowcase: React.FC = () => {
 
           {/* Screenshot Explanatory Description & Callout Highlights */}
           <AnimatePresence mode="wait">
-            <motion.div 
+            <motion.div
               key={activeShot.id}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -272,11 +271,10 @@ export const ScreenshotsShowcase: React.FC = () => {
                     key={shot.id}
                     type="button"
                     onClick={() => setSelectedShotIndex(idx)}
-                    className={`w-14 h-9 rounded-md overflow-hidden border-2 transition-all flex-shrink-0 ${
-                      idx === selectedShotIndex
+                    className={`w-14 h-9 rounded-md overflow-hidden border-2 transition-all flex-shrink-0 ${idx === selectedShotIndex
                         ? 'border-primary-blue scale-105 ring-2 ring-primary-blue/30'
                         : 'border-slate-700 opacity-60 hover:opacity-100'
-                    }`}
+                      }`}
                   >
                     <img src={shot.imageSrc} alt={shot.title} className="w-full h-full object-cover" />
                   </button>

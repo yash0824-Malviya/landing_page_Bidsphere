@@ -13,7 +13,7 @@ import { fadeInUp, springGentle } from '../../animations/variants';
 // ============================================================================
 // 1. Thin Scroll Progress Indicator (Section 15 D)
 // ============================================================================
-export const ScrollProgressBar: React.FC = () => {
+export const ScrollProgressBar = () => {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 180,
@@ -40,13 +40,13 @@ interface ScrollRevealProps {
   yOffset?: number;
 }
 
-export const ScrollReveal: React.FC<ScrollRevealProps> = ({
+export const ScrollReveal = ({
   children,
   className = '',
   delay = 0,
   duration = 0.5,
   yOffset = 24,
-}) => {
+}: ScrollRevealProps) => {
   const prefersReducedMotion = useReducedMotion();
 
   if (prefersReducedMotion) {
@@ -81,12 +81,12 @@ interface SpotlightCardProps {
   onClick?: () => void;
 }
 
-export const SpotlightCard: React.FC<SpotlightCardProps> = ({
+export const SpotlightCard = ({
   children,
   className = '',
   spotlightColor = 'rgba(20, 108, 232, 0.08)',
   onClick,
-}) => {
+}: SpotlightCardProps) => {
   const divRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState<number>(0);
@@ -145,14 +145,14 @@ interface MagneticButtonProps {
   disabled?: boolean;
 }
 
-export const MagneticButton: React.FC<MagneticButtonProps> = ({
+export const MagneticButton = ({
   children,
   className = '',
   onClick,
   strength = 0.2,
   type = 'button',
   disabled = false,
-}) => {
+}: MagneticButtonProps) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [offset, setOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const prefersReducedMotion = useReducedMotion();
@@ -202,11 +202,11 @@ interface AnimatedCounterProps {
   className?: string;
 }
 
-export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
+export const AnimatedCounter = ({
   value,
   duration = 1.4,
   className = '',
-}) => {
+}: AnimatedCounterProps) => {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
   const [displayValue, setDisplayValue] = useState<string>(typeof value === 'string' ? value : '0');
@@ -281,7 +281,7 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
 // ============================================================================
 // 6. Floating Back-to-Top Button (Section 14)
 // ============================================================================
-export const BackToTopButton: React.FC = () => {
+export const BackToTopButton = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -317,3 +317,4 @@ export const BackToTopButton: React.FC = () => {
     </AnimatePresence>
   );
 };
+

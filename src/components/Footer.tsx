@@ -2,13 +2,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, ArrowUp, ArrowRight } from 'lucide-react';
 
-export const Footer: React.FC = () => {
+export const Footer = () => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <motion.footer 
+    <motion.footer
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: '-40px' }}

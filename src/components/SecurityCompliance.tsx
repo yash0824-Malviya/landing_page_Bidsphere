@@ -13,7 +13,7 @@ import {
 import { ScrollReveal, SpotlightCard } from './common/MotionComponents';
 import { fadeInUp, staggerContainer } from '../animations/variants';
 
-export const SecurityCompliance: React.FC = () => {
+export const SecurityCompliance = () => {
   const securityFeatures = [
     {
       icon: Lock,

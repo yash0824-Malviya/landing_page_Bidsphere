@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { rolesData } from '../data/rolesData';
-import { 
-  UserCheck, 
-  Briefcase, 
-  Cpu, 
-  DollarSign, 
-  Scale, 
-  ShieldAlert, 
+import {
+  UserCheck,
+  Briefcase,
+  Cpu,
+  DollarSign,
+  Scale,
+  ShieldAlert,
   Store,
   CheckCircle2,
   Bell,
@@ -28,7 +28,7 @@ const iconMap: Record<string, React.ElementType> = {
   Store,
 };
 
-export const RolesSection: React.FC = () => {
+export const RolesSection = () => {
   const [selectedRoleId, setSelectedRoleId] = useState<string>('procurement-team');
 
   const activeRole = rolesData.find((r) => r.id === selectedRoleId) || rolesData[0];
@@ -63,11 +63,10 @@ export const RolesSection: React.FC = () => {
               <button
                 key={role.id}
                 onClick={() => setSelectedRoleId(role.id)}
-                className={`relative flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
-                  isSelected
+                className={`relative flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${isSelected
                     ? 'text-white'
                     : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200'
-                }`}
+                  }`}
               >
                 {isSelected && (
                   <motion.div
@@ -97,7 +96,7 @@ export const RolesSection: React.FC = () => {
               {/* Left 5 Cols: Role Persona & Mission */}
               <div className="lg:col-span-5 space-y-6">
                 <div className="flex items-center space-x-3.5">
-                  <motion.div 
+                  <motion.div
                     initial={{ scale: 0.9 }}
                     animate={{ scale: 1 }}
                     transition={{ type: 'spring', stiffness: 350, damping: 25 }}

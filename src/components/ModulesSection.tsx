@@ -35,7 +35,7 @@ const iconMap: Record<string, React.ElementType> = {
   BarChart3,
 };
 
-export const ModulesSection: React.FC = () => {
+export const ModulesSection = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [expandedModuleId, setExpandedModuleId] = useState<string | null>('module-06'); // Default open AI engine or first module
 

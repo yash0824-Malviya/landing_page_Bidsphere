@@ -14,7 +14,7 @@ import {
 import { SpotlightCard, ScrollReveal } from './common/MotionComponents';
 import { fadeInUp, staggerContainer } from '../animations/variants';
 
-export const PlatformOverview: React.FC = () => {
+export const PlatformOverview = () => {
   const pillars = [
     {
       icon: Network,
