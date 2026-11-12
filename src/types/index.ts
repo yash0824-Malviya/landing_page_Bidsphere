@@ -44,6 +44,7 @@ export interface StakeholderRole {
 
 export interface ProductScreenshot {
   id: string;
+  tabLabel?: string;
   title: string;
   category: string;
   description: string;

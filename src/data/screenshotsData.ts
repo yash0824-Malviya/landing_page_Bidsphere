@@ -3,22 +3,24 @@ import { ProductScreenshot, SupplierEvaluationDemo } from '../types';
 export const productScreenshots: ProductScreenshot[] = [
   {
     id: 'supplier-dashboard',
+    tabLabel: 'Supplier Portal',
     title: 'BidSphere Supplier Collaboration Portal',
     category: 'Supplier Ecosystem',
-    description: 'Empowers certified vendors with real-time tender invitations, structured quotation forms, and live order tracking without email ping-pong.',
+    description: 'Enable suppliers to manage RFQs, submit quotations, track orders and collaborate with procurement teams.',
     imageSrc: '/supplier-dashboard-desktop.png',
     highlights: [
       'Self-service RFQ access & tokenized authentication',
       'Instant tender response status & milestone alerts',
       'Real-time quotation revision logging'
     ],
-    badge: 'Live Portal View'
+    badge: 'Vendor Portal'
   },
   {
     id: 'attention-grid',
+    tabLabel: 'Command Center',
     title: 'Procurement Attention Grid & Command Console',
     category: 'Procurement Governance',
-    description: 'Centralized cockpit highlighting critical actions: urgent RFQ deadlines, pending cross-functional approvals, and supplier compliance warnings.',
+    description: 'Gain centralized visibility into procurement activities, pending actions, approvals and sourcing performance.',
     imageSrc: '/supplier-attention-grid-desktop.png',
     highlights: [
       'Zero Department Head approval routing indicator',
@@ -28,10 +30,25 @@ export const productScreenshots: ProductScreenshot[] = [
     badge: 'Operations Hub'
   },
   {
+    id: 'ai-evaluator',
+    tabLabel: 'AI Evaluator',
+    title: 'Intelligent Supplier & Quotation Evaluation Engine',
+    category: 'Intelligent Sourcing',
+    description: 'Evaluate supplier quotations using weighted scoring, risk assessment and intelligent supplier recommendations.',
+    imageSrc: '/supplier-hierarchy-desktop.png',
+    highlights: [
+      'Multi-criteria weighted scoring across price & SLAs',
+      'Automated supplier risk tiering and outlier detection',
+      'Instant quotation comparison matrix & recommendation'
+    ],
+    badge: 'AI Intelligence'
+  },
+  {
     id: 'contract-lifecycle',
+    tabLabel: 'CLM & E-Sign',
     title: 'Contract Lifecycle Management & E-Signature',
     category: 'CLM & Legal',
-    description: 'Seamlessly links awarded RFQs to legally binding agreements with dual cryptographic e-signatures and clause audit trails.',
+    description: 'Manage contract acceptance, reviews, approval stages and electronic signature workflows.',
     imageSrc: '/supplier-contract-acceptance-ready.png',
     highlights: [
       'Direct RFQ-to-Contract clause generation',
@@ -42,9 +59,10 @@ export const productScreenshots: ProductScreenshot[] = [
   },
   {
     id: 'enterprise-contract-pdf',
+    tabLabel: 'Contract Viewer',
     title: 'Multi-Page Enterprise Contract Viewer',
     category: 'Legal Review',
-    description: 'Integrated document viewer with formal formatting, standardized clause library references, and financial schedule bindings.',
+    description: 'Review approved contract documents through an integrated multi-page document viewing experience.',
     imageSrc: '/contract-enterprise-preview-desktop.png',
     highlights: [
       'Dynamic PDF rendering directly in-browser',
@@ -55,9 +73,10 @@ export const productScreenshots: ProductScreenshot[] = [
   },
   {
     id: 'po-contract-link',
+    tabLabel: 'PO Verification',
     title: 'PO & Contract Relationship Verification',
     category: 'Execution & Purchasing',
-    description: 'Tight integration between transactional Purchase Orders and Master Services Agreements, ensuring full commercial compliance.',
+    description: 'Improve visibility into purchase order and contract relationships with structured verification.',
     imageSrc: '/po28-linked-contract-supplier.png',
     highlights: [
       '3-way match ready line-item binding',
@@ -68,6 +87,7 @@ export const productScreenshots: ProductScreenshot[] = [
   },
   {
     id: 'secure-authentication',
+    tabLabel: 'Security Gateway',
     title: 'Enterprise Single Sign-On & Security Gateway',
     category: 'Security & Access',
     description: 'Role-based access control with MFA enforcement, ensuring complete data segregation between internal teams and external suppliers.',
