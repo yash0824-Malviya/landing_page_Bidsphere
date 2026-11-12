@@ -2,22 +2,19 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from '../animations/motion-shim';
 import { 
   Mail, 
-  Phone, 
   MapPin, 
   CheckCircle2, 
-  ArrowRight, 
-  ShieldCheck, 
   Clock, 
   Send,
   Loader2
 } from 'lucide-react';
-import { ScrollReveal, MagneticButton } from './common/MotionComponents';
+import { ScrollReveal } from './common/MotionComponents';
 
 interface ContactSectionProps {
-  onRequestDemo: () => void;
+  onRequestDemo?: () => void;
 }
 
-export const ContactSection = ({ onRequestDemo }: ContactSectionProps) => {
+export const ContactSection = ({ onRequestDemo: _onRequestDemo }: ContactSectionProps = {}) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -60,25 +57,25 @@ export const ContactSection = ({ onRequestDemo }: ContactSectionProps) => {
   };
 
   return (
-    <section id="contact" className="py-20 md:py-28 bg-white border-t border-slate-200/80 relative">
+    <section id="contact" className="py-14 md:py-20 bg-white border-t border-slate-200/80 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Left 5 Cols: Contact Information */}
-          <ScrollReveal className="lg:col-span-5 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Left 5 Cols: Contact Information (Vertically Centered with Form) */}
+          <ScrollReveal className="lg:col-span-5 space-y-5 lg:pr-4">
             <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-50 text-primary-blue text-xs font-semibold uppercase tracking-wider border border-blue-200/80">
               <span>Enterprise Engagement</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-navy tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-navy tracking-tight leading-tight">
               Ready to Modernize Your Procurement Infrastructure?
             </h2>
 
-            <p className="text-base text-slate-600 leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
               Connect with our procurement solution specialists to discuss deployment options, ERP connectors,
               custom workflows, and tailored proof-of-concept timelines.
             </p>
 
-            <div className="space-y-4 pt-2">
+            <div className="space-y-3.5 pt-1">
               <div className="flex items-start space-x-3.5">
                 <div className="p-2.5 rounded-xl bg-slate-100 text-primary-blue flex-shrink-0 mt-0.5">
                   <MapPin className="w-5 h-5" />
@@ -110,21 +107,10 @@ export const ContactSection = ({ onRequestDemo }: ContactSectionProps) => {
                 </div>
               </div>
             </div>
-
-            <div className="pt-4 flex items-center space-x-3">
-              <button
-                type="button"
-                onClick={onRequestDemo}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-primary-blue hover:bg-primary-blue-600 text-white font-semibold text-xs transition-colors shadow-sm"
-              >
-                <span>Launch Interactive Demo Modal</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
           </ScrollReveal>
 
           {/* Right 7 Cols: Interactive Direct Inquiry Form with Validation & Feedback */}
-          <ScrollReveal delay={0.15} className="lg:col-span-7 bg-brand-bg rounded-3xl border border-slate-200 p-8 sm:p-10 shadow-card">
+          <ScrollReveal delay={0.15} className="lg:col-span-7 bg-brand-bg rounded-3xl border border-slate-200 p-6 sm:p-9 shadow-card">
             <AnimatePresence mode="wait">
               {isSuccess ? (
                 <motion.div
@@ -162,8 +148,8 @@ export const ContactSection = ({ onRequestDemo }: ContactSectionProps) => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  <div className="mb-6">
-                    <h3 className="text-2xl font-bold text-navy">
+                  <div className="mb-5">
+                    <h3 className="text-xl sm:text-2xl font-bold text-navy">
                       Schedule a Tailored Solution Briefing
                     </h3>
                     <p className="text-xs sm:text-sm text-slate-600 mt-1">
