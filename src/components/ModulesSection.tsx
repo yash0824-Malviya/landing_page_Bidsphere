@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from '../animations/motion-shim';
 import { modulesData } from '../data/modulesData';
 import { ModuleItem } from '../types';
@@ -15,11 +15,15 @@ import {
   BarChart3, 
   Check, 
   ArrowRight,
-  ChevronDown,
-  Layers
+  X,
+  ExternalLink,
+  ChevronRight,
+  Layers,
+  Sliders,
+  ShieldAlert,
+  ArrowUpRight
 } from 'lucide-react';
-import { ScrollReveal, SpotlightCard } from './common/MotionComponents';
-import { fadeInUp, staggerContainer } from '../animations/variants';
+import { ScrollReveal } from './common/MotionComponents';
 
 // Icon Map helper
 const iconMap: Record<string, React.ElementType> = {
@@ -37,7 +41,26 @@ const iconMap: Record<string, React.ElementType> = {
 
 export const ModulesSection = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [expandedModuleId, setExpandedModuleId] = useState<string | null>('module-06'); // Default open AI engine or first module
+  const [selectedModalModule, setSelectedModalModule] = useState<ModuleItem | null>(null);
+
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedModalModule(null);
+      }
+    };
+    if (selectedModalModule) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedModalModule]);
 
   const categories = [
     { id: 'all', label: 'All 10 Modules' },
@@ -59,179 +82,301 @@ export const ModulesSection = () => {
         return true;
       });
 
-  const toggleExpand = (id: string) => {
-    setExpandedModuleId((prev) => (prev === id ? null : id));
+  // Helper for Module 06 (AI Engine) collapsed 3 key capabilities
+  const getCardCapabilities = (module: ModuleItem): string[] => {
+    if (module.id === 'module-06') {
+      return [
+        'Intelligent Supplier Ranking algorithm',
+        'Weighted Multi-Factor Scoring (35/25/30/10)',
+        'Continuous Supplier Risk & SLA Assessment'
+      ];
+    }
+    return module.capabilities.slice(0, 3);
   };
 
   return (
-    <section id="modules" className="py-20 md:py-28 bg-brand-bg relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="modules" className="py-20 lg:py-24 bg-[#F5F7FB] relative border-t border-slate-200/80">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+        
         {/* Section Header */}
-        <ScrollReveal className="text-center max-w-3xl mx-auto space-y-4 mb-14">
+        <ScrollReveal className="text-center max-w-3xl mx-auto space-y-4 mb-12 lg:mb-14">
           <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-50 text-primary-blue text-xs font-semibold uppercase tracking-wider border border-blue-200/80">
             <span>Modular Enterprise Suite</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-navy tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-4xl font-extrabold text-[#0F1B36] tracking-tight">
             Complete BidSphere Modules
           </h2>
-          <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-            Ten fully integrated modules designed to eliminate process fragmentation and provide complete
-            transparency across the enterprise procurement lifecycle.
+          <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl mx-auto">
+            Ten fully integrated modules designed to eliminate process fragmentation and deliver end-to-end governance across the enterprise procurement lifecycle.
           </p>
 
-          {/* Category Filter Pills with Layout Animation */}
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-4">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`relative px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
-                  selectedCategory === cat.id
-                    ? 'text-white'
-                    : 'text-slate-700 hover:text-navy bg-white border border-slate-200/80 hover:bg-slate-50'
-                }`}
-              >
-                {selectedCategory === cat.id && (
-                  <motion.div
-                    layoutId="module-filter-pill"
-                    className="absolute inset-0 bg-navy rounded-xl shadow-sm -z-0"
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10">{cat.label}</span>
-              </button>
-            ))}
+          {/* Category Filter Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-3">
+            {categories.map((cat) => {
+              const isActive = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                    isActive
+                      ? 'bg-[#0F1B36] text-white shadow-sm ring-1 ring-[#0F1B36]'
+                      : 'bg-white text-slate-600 hover:text-[#0F1B36] border border-slate-200/80 hover:bg-slate-50'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
           </div>
         </ScrollReveal>
 
-        {/* Modules Grid with Staggered Entrance */}
-        <motion.div 
-          layout
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8"
-        >
+        {/* 3-Column Responsive Grid with Equal Width & Equal Height Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-6 items-stretch">
           {filteredModules.map((module) => {
             const IconComponent = iconMap[module.icon] || Layers;
-            const isExpanded = expandedModuleId === module.id;
+            const topCapabilities = getCardCapabilities(module);
 
             return (
-              <motion.div
+              <div 
                 key={module.id}
-                layout
-                variants={fadeInUp}
-                className="h-full"
+                className="group relative bg-white rounded-2xl border border-slate-200/90 p-6 flex flex-col justify-between shadow-[0_2px_8px_rgba(15,27,54,0.04)] hover:shadow-[0_12px_28px_rgba(20,108,232,0.1)] hover:border-primary-blue/60 hover:-translate-y-1 transition-all duration-300 min-h-[340px]"
               >
-                <div 
-                  className={`bg-white rounded-2xl border transition-all duration-300 shadow-subtle hover:shadow-card p-6 sm:p-7 flex flex-col justify-between ${
-                    isExpanded 
-                      ? 'border-primary-blue/70 ring-1 ring-primary-blue/30 shadow-card' 
-                      : 'border-slate-200/90 hover:border-slate-300'
-                  }`}
-                >
-                  <div>
-                    {/* Header Row: Badge & Icon */}
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-2.5">
-                        <motion.div 
-                          whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
-                          transition={{ duration: 0.4 }}
-                          className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-primary-blue"
-                        >
-                          <IconComponent className="w-5 h-5" />
-                        </motion.div>
-                        <span className="text-xs font-mono font-bold text-slate-500 uppercase">
-                          {module.number}
-                        </span>
+                <div>
+                  {/* Card Header: Icon, Number, Badge */}
+                  <div className="flex items-center justify-between gap-2 mb-4">
+                    <div className="flex items-center space-x-2.5">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50/80 border border-blue-100 flex items-center justify-center text-primary-blue group-hover:scale-105 group-hover:bg-primary-blue group-hover:text-white transition-all duration-300 flex-shrink-0">
+                        <IconComponent className="w-5 h-5" />
                       </div>
-                      <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                        {module.badge}
+                      <span className="text-xs font-mono font-bold text-slate-400">
+                        {module.number}
                       </span>
                     </div>
 
-                    <h3 className="text-xl font-bold text-navy mb-2">
-                      {module.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
-                      {module.purpose}
-                    </p>
+                    <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/60 truncate max-w-[160px]">
+                      {module.badge}
+                    </span>
+                  </div>
 
-                    {/* Features Preview list */}
-                    <div className="space-y-2 mb-4">
-                      {module.capabilities.slice(0, 3).map((feat, fIdx) => (
-                        <div key={fIdx} className="flex items-start text-xs text-slate-700">
-                          <Check className="w-3.5 h-3.5 text-emerald-600 mr-2 mt-0.5 flex-shrink-0" />
-                          <span>{feat}</span>
+                  {/* Module Title (Max 2 lines, uniform 48px height) */}
+                  <h3 className="text-lg font-bold text-[#0F1B36] group-hover:text-primary-blue transition-colors line-clamp-2 min-h-[3rem] flex items-center mb-2">
+                    {module.title}
+                  </h3>
+
+                  {/* Module Description (Concise, uniform 40px height) */}
+                  <p className="text-xs sm:text-[13px] text-slate-600 line-clamp-2 min-h-[2.5rem] leading-relaxed mb-4">
+                    {module.purpose}
+                  </p>
+
+                  {/* 3 Key Capabilities with Checkmarks */}
+                  <div className="space-y-2 mb-5">
+                    {topCapabilities.map((feat, fIdx) => (
+                      <div key={fIdx} className="flex items-start text-xs text-slate-700">
+                        <Check className="w-3.5 h-3.5 text-emerald-600 mr-2 mt-0.5 flex-shrink-0" />
+                        <span className="line-clamp-1">{feat}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Card Footer: Aligned at Bottom */}
+                <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedModalModule(module)}
+                    className="inline-flex items-center font-semibold text-primary-blue hover:text-navy group/link transition-colors focus:outline-none"
+                  >
+                    <span>Explore Module</span>
+                    <ArrowRight className="w-3.5 h-3.5 ml-1 transition-transform group-hover/link:translate-x-1" />
+                  </button>
+
+                  <a
+                    href="#lifecycle"
+                    className="text-slate-400 hover:text-primary-blue flex items-center gap-1 transition-colors"
+                  >
+                    <span>View Workflow</span>
+                    <ChevronRight className="w-3 h-3" />
+                  </a>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Polished Enterprise Module Detail Modal */}
+        <AnimatePresence>
+          {selectedModalModule && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+              {/* Backdrop */}
+              <div 
+                className="fixed inset-0 bg-[#0F1B36]/60 backdrop-blur-sm transition-opacity"
+                onClick={() => setSelectedModalModule(null)}
+                aria-hidden="true"
+              />
+
+              {/* Modal Box */}
+              <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden z-10 max-h-[90vh] flex flex-col my-auto">
+                
+                {/* Modal Header */}
+                <div className="bg-[#0F1B36] text-white p-6 flex items-start justify-between">
+                  <div className="flex items-center space-x-3.5">
+                    {(() => {
+                      const IconComp = iconMap[selectedModalModule.icon] || Layers;
+                      return (
+                        <div className="w-12 h-12 rounded-2xl bg-primary-blue/30 border border-primary-blue/40 flex items-center justify-center text-white flex-shrink-0">
+                          <IconComp className="w-6 h-6" />
+                        </div>
+                      );
+                    })()}
+                    <div>
+                      <div className="flex items-center space-x-2 mb-1">
+                        <span className="text-xs font-mono font-bold text-sky-400 uppercase tracking-wider">
+                          Module {selectedModalModule.number}
+                        </span>
+                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-white/10 text-white border border-white/20">
+                          {selectedModalModule.badge}
+                        </span>
+                      </div>
+                      <h3 className="text-xl sm:text-2xl font-bold tracking-tight">
+                        {selectedModalModule.title}
+                      </h3>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedModalModule(null)}
+                    className="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors focus:outline-none"
+                    aria-label="Close modal"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Modal Scrollable Body */}
+                <div className="p-6 sm:p-8 overflow-y-auto space-y-6">
+                  
+                  {/* Detailed Description */}
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                      Module Scope & Objective
+                    </h4>
+                    <p className="text-sm sm:text-base text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200/70">
+                      {selectedModalModule.purpose}
+                    </p>
+                  </div>
+
+                  {/* Special AI Evaluation Section for Module 06 */}
+                  {selectedModalModule.id === 'module-06' && (
+                    <div className="p-5 rounded-2xl bg-amber-50/80 border border-amber-200 space-y-4">
+                      <div className="flex items-center space-x-2 text-amber-900 font-bold text-sm">
+                        <Sliders className="w-4 h-4 text-amber-600" />
+                        <span>Weighted Scoring Algorithm Model</span>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                        <div className="p-3 bg-white rounded-xl border border-amber-200/80 shadow-xs">
+                          <span className="text-xs text-slate-500 font-medium block">Price Weight</span>
+                          <span className="text-lg font-extrabold text-[#0F1B36]">35%</span>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-amber-200/80 shadow-xs">
+                          <span className="text-xs text-slate-500 font-medium block">Delivery Lead</span>
+                          <span className="text-lg font-extrabold text-[#0F1B36]">25%</span>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-amber-200/80 shadow-xs">
+                          <span className="text-xs text-slate-500 font-medium block">Reliability</span>
+                          <span className="text-lg font-extrabold text-[#0F1B36]">30%</span>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-amber-200/80 shadow-xs">
+                          <span className="text-xs text-slate-500 font-medium block">Completeness</span>
+                          <span className="text-lg font-extrabold text-[#0F1B36]">10%</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-amber-800 leading-relaxed">
+                        Suppliers are scored automatically upon RFQ quotation submission. Risk classifications (Low, Medium, High) dynamically flag SLA anomalies before purchase awards.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* All Capabilities Checklist */}
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                      Complete Technical & Functional Capabilities ({selectedModalModule.capabilities.length})
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {selectedModalModule.capabilities.map((cap, cIdx) => (
+                        <div key={cIdx} className="flex items-start text-xs sm:text-sm text-slate-700 p-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                          <Check className="w-4 h-4 text-emerald-600 mr-2.5 mt-0.5 flex-shrink-0" />
+                          <span>{cap}</span>
                         </div>
                       ))}
                     </div>
+                  </div>
 
-                    {/* Animated Accordion Expandable Section */}
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                          className="overflow-hidden"
-                        >
-                          <div className="pt-3 pb-2 border-t border-slate-100 space-y-3">
-                            {module.capabilities.length > 3 && (
-                              <div className="space-y-2 pt-1">
-                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                                  Extended Capabilities
-                                </span>
-                                {module.capabilities.slice(3).map((extraFeat, eIdx) => (
-                                  <div key={eIdx} className="flex items-start text-xs text-slate-700">
-                                    <Check className="w-3.5 h-3.5 text-primary-blue mr-2 mt-0.5 flex-shrink-0" />
-                                    <span>{extraFeat}</span>
-                                  </div>
-                                ))}
-                              </div>
+                  {/* Performance Metrics / Impact Statistics */}
+                  {selectedModalModule.metrics && selectedModalModule.metrics.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                        Operational Benchmarks & Impact Metrics
+                      </h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {selectedModalModule.metrics.map((metric, mIdx) => (
+                          <div key={mIdx} className="p-3 bg-blue-50/60 rounded-xl border border-blue-100 text-center">
+                            <span className="text-base sm:text-lg font-extrabold text-[#0F1B36] block">
+                              {metric.value}
+                            </span>
+                            <span className="text-[11px] font-semibold text-primary-blue block">
+                              {metric.label}
+                            </span>
+                            {metric.helper && (
+                              <span className="text-[10px] text-slate-500 block mt-0.5">
+                                {metric.helper}
+                              </span>
                             )}
-
-                            <div className="p-3 bg-brand-bg/80 rounded-xl border border-slate-200/80 text-xs">
-                              <span className="font-semibold text-navy">Zero Dept Head Compliance: </span>
-                              <span className="text-slate-600">Requisitions flow strictly through Finance and Procurement governance into Executive Authorization.</span>
-                            </div>
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Strategic Governance Note */}
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-start space-x-3 text-xs sm:text-sm text-slate-600">
+                    <ShieldCheck className="w-5 h-5 text-primary-blue flex-shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold text-[#0F1B36]">Direct Governance Enforcement: </span>
+                      <span>
+                        Adheres strictly to the Zero Department Head policy. Requisitions pass directly from business intakes through Finance and Procurement reviews into direct Executive Authorization.
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Bottom Action Button */}
-                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between mt-2">
-                    <button
-                      type="button"
-                      onClick={() => toggleExpand(module.id)}
-                      className="inline-flex items-center text-xs font-semibold text-primary-blue hover:text-navy transition-colors focus:outline-none"
-                    >
-                      <span>{isExpanded ? 'Collapse Module Specs' : 'Expand Module Specs'}</span>
-                      <motion.div
-                        animate={{ rotate: isExpanded ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="ml-1"
-                      >
-                        <ChevronDown className="w-3.5 h-3.5" />
-                      </motion.div>
-                    </button>
-                    <a
-                      href="#lifecycle"
-                      className="text-xs text-slate-400 hover:text-primary-blue flex items-center gap-1 transition-colors"
-                    >
-                      <span>View in Workflow</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </a>
-                  </div>
                 </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+
+                {/* Modal Footer */}
+                <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                  <a
+                    href="#lifecycle"
+                    onClick={() => setSelectedModalModule(null)}
+                    className="inline-flex items-center text-xs sm:text-sm font-semibold text-primary-blue hover:text-navy transition-colors"
+                  >
+                    <span>View Stage in 17-Step Procurement Lifecycle</span>
+                    <ArrowRight className="w-4 h-4 ml-1.5" />
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedModalModule(null)}
+                    className="px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-[#0F1B36] text-white hover:bg-slate-800 transition-colors shadow-sm"
+                  >
+                    Close Specs
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          )}
+        </AnimatePresence>
+
       </div>
     </section>
   );
