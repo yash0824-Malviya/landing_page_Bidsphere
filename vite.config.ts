@@ -7,13 +7,12 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      'react': path.resolve(__dirname, './node_modules/react'),
-      'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
+      'framer-motion': path.resolve(__dirname, './src/animations/motion-shim.tsx'),
     },
     dedupe: ['react', 'react-dom'],
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'framer-motion', 'lucide-react'],
+    include: ['react', 'react-dom', 'lucide-react'],
     force: true,
   },
   server: {
