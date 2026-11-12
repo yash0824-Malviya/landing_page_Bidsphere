@@ -14,14 +14,11 @@ import {
   PackageCheck, 
   BarChart3, 
   Check, 
-  ArrowRight,
-  X,
-  ExternalLink,
-  ChevronRight,
-  Layers,
-  Sliders,
-  ShieldAlert,
-  ArrowUpRight
+  ArrowRight, 
+  X, 
+  ChevronRight, 
+  Layers, 
+  Sliders 
 } from 'lucide-react';
 import { ScrollReveal } from './common/MotionComponents';
 
@@ -82,7 +79,7 @@ export const ModulesSection = () => {
         return true;
       });
 
-  // Helper for Module 06 (AI Engine) collapsed 3 key capabilities
+  // Helper for 3 key capabilities per card
   const getCardCapabilities = (module: ModuleItem): string[] => {
     if (module.id === 'module-06') {
       return [
@@ -94,34 +91,47 @@ export const ModulesSection = () => {
     return module.capabilities.slice(0, 3);
   };
 
+  // Determine grid container layout based on item count to avoid isolated orphan cards
+  const getGridClasses = () => {
+    if (filteredModules.length === 1) {
+      return 'max-w-xl mx-auto w-full';
+    }
+    if (filteredModules.length === 2) {
+      return 'grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto w-full items-stretch';
+    }
+    return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch';
+  };
+
+  const isAllSelected = selectedCategory === 'all';
+
   return (
-    <section id="modules" className="py-20 lg:py-24 bg-[#F5F7FB] relative border-t border-slate-200/80">
+    <section id="modules" className="py-12 md:py-16 bg-[#F5F7FB] relative border-t border-slate-200/80">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Header */}
-        <ScrollReveal className="text-center max-w-3xl mx-auto space-y-4 mb-12 lg:mb-14">
-          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-50 text-primary-blue text-xs font-semibold uppercase tracking-wider border border-blue-200/80">
+        {/* Compact Section Header */}
+        <ScrollReveal className="text-center max-w-3xl mx-auto space-y-2.5 mb-8 sm:mb-9">
+          <div className="inline-flex items-center space-x-1.5 px-3 py-0.5 rounded-full bg-blue-50 text-primary-blue text-[11px] font-semibold uppercase tracking-wider border border-blue-200/80">
             <span>Modular Enterprise Suite</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-4xl font-extrabold text-[#0F1B36] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-3xl font-extrabold text-[#0F1B36] tracking-tight">
             Complete BidSphere Modules
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl mx-auto">
             Ten fully integrated modules designed to eliminate process fragmentation and deliver end-to-end governance across the enterprise procurement lifecycle.
           </p>
 
-          {/* Category Filter Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-3">
+          {/* Compact Category Filter Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 pt-1">
             {categories.map((cat) => {
               const isActive = selectedCategory === cat.id;
               return (
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                  className={`px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-150 ${
                     isActive
-                      ? 'bg-[#0F1B36] text-white shadow-sm ring-1 ring-[#0F1B36]'
-                      : 'bg-white text-slate-600 hover:text-[#0F1B36] border border-slate-200/80 hover:bg-slate-50'
+                      ? 'bg-[#0F1B36] text-white shadow-xs ring-1 ring-[#0F1B36]'
+                      : 'bg-white text-slate-600 hover:text-[#0F1B36] border border-slate-200/90 hover:bg-slate-50'
                   }`}
                 >
                   {cat.label}
@@ -131,46 +141,117 @@ export const ModulesSection = () => {
           </div>
         </ScrollReveal>
 
-        {/* 3-Column Responsive Grid with Equal Width & Equal Height Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-6 items-stretch">
+        {/* Responsive Grid with Equal Height Cards & Balanced Last Row */}
+        <div className={getGridClasses()}>
           {filteredModules.map((module) => {
             const IconComponent = iconMap[module.icon] || Layers;
             const topCapabilities = getCardCapabilities(module);
 
+            // Special executive capstone banner for Module 10 when displaying All 10 Modules
+            // This eliminates the isolated 4th-row orphan card and creates a balanced, premium finish
+            if (isAllSelected && module.id === 'module-10') {
+              return (
+                <div
+                  key={module.id}
+                  className="group relative col-span-1 md:col-span-2 lg:col-span-3 bg-gradient-to-r from-white via-blue-50/25 to-white rounded-2xl border border-blue-200/90 p-5 sm:p-6 shadow-[0_2px_8px_rgba(15,27,54,0.04)] hover:shadow-[0_8px_24px_rgba(20,108,232,0.08)] hover:border-primary-blue/60 transition-all duration-200"
+                >
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+                    {/* Left: Icon, Number, Title & Purpose */}
+                    <div className="lg:max-w-md xl:max-w-lg space-y-2">
+                      <div className="flex items-center space-x-2.5">
+                        <div className="w-10 h-10 rounded-xl bg-primary-blue text-white flex items-center justify-center flex-shrink-0 shadow-sm shadow-primary-blue/30 group-hover:scale-105 transition-transform duration-200">
+                          <IconComponent className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xs font-mono font-bold text-primary-blue">
+                              MODULE {module.number}
+                            </span>
+                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blue-100/70 text-primary-blue border border-blue-200">
+                              {module.badge}
+                            </span>
+                          </div>
+                          <h3 className="text-lg font-bold text-[#0F1B36] leading-snug group-hover:text-primary-blue transition-colors">
+                            {module.title}
+                          </h3>
+                        </div>
+                      </div>
+                      <p className="text-xs sm:text-[13px] text-slate-600 line-clamp-2 leading-relaxed">
+                        {module.purpose}
+                      </p>
+                    </div>
+
+                    {/* Middle: 3 Key Capabilities in a clean vertical stack */}
+                    <div className="space-y-1.5 border-y lg:border-y-0 lg:border-x border-slate-200/70 py-3 lg:py-0 lg:px-6">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                        Executive Capabilities
+                      </span>
+                      {topCapabilities.map((feat, fIdx) => (
+                        <div key={fIdx} className="flex items-center text-xs text-slate-700">
+                          <Check className="w-3.5 h-3.5 text-emerald-600 mr-2 flex-shrink-0" />
+                          <span className="line-clamp-1">{feat}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Right: Actions */}
+                    <div className="flex flex-row lg:flex-col items-center lg:items-end justify-between lg:justify-center gap-2.5 flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedModalModule(module)}
+                        className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-primary-blue hover:bg-blue-700 text-white font-semibold text-xs shadow-sm shadow-primary-blue/20 transition-all hover:scale-[1.01]"
+                      >
+                        <span>Explore Command Center</span>
+                        <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                      </button>
+                      <a
+                        href="#lifecycle"
+                        className="text-xs font-medium text-slate-500 hover:text-primary-blue flex items-center gap-1 transition-colors"
+                      >
+                        <span>View in 17-Step Lifecycle</span>
+                        <ChevronRight className="w-3 h-3" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            // Standard Compact Module Card (Modules 01 - 09, or filtered views)
             return (
               <div 
                 key={module.id}
-                className="group relative bg-white rounded-2xl border border-slate-200/90 p-6 flex flex-col justify-between shadow-[0_2px_8px_rgba(15,27,54,0.04)] hover:shadow-[0_12px_28px_rgba(20,108,232,0.1)] hover:border-primary-blue/60 hover:-translate-y-1 transition-all duration-300 min-h-[340px]"
+                className="group relative bg-white rounded-xl sm:rounded-2xl border border-slate-200/90 p-5 flex flex-col justify-between shadow-[0_2px_8px_rgba(15,27,54,0.04)] hover:shadow-[0_8px_20px_rgba(20,108,232,0.08)] hover:border-primary-blue/50 hover:-translate-y-0.5 transition-all duration-200"
               >
                 <div>
                   {/* Card Header: Icon, Number, Badge */}
-                  <div className="flex items-center justify-between gap-2 mb-4">
+                  <div className="flex items-center justify-between gap-2 mb-3">
                     <div className="flex items-center space-x-2.5">
-                      <div className="w-10 h-10 rounded-xl bg-blue-50/80 border border-blue-100 flex items-center justify-center text-primary-blue group-hover:scale-105 group-hover:bg-primary-blue group-hover:text-white transition-all duration-300 flex-shrink-0">
-                        <IconComponent className="w-5 h-5" />
+                      <div className="w-9 h-9 rounded-xl bg-blue-50/80 border border-blue-100 flex items-center justify-center text-primary-blue group-hover:bg-primary-blue group-hover:text-white transition-colors duration-200 flex-shrink-0">
+                        <IconComponent className="w-4 h-4" />
                       </div>
                       <span className="text-xs font-mono font-bold text-slate-400">
                         {module.number}
                       </span>
                     </div>
 
-                    <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/60 truncate max-w-[160px]">
+                    <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/60 truncate max-w-[140px]">
                       {module.badge}
                     </span>
                   </div>
 
-                  {/* Module Title (Max 2 lines, uniform 48px height) */}
-                  <h3 className="text-lg font-bold text-[#0F1B36] group-hover:text-primary-blue transition-colors line-clamp-2 min-h-[3rem] flex items-center mb-2">
+                  {/* Module Title (Max 2 lines, uniform height) */}
+                  <h3 className="text-base font-bold text-[#0F1B36] group-hover:text-primary-blue transition-colors line-clamp-2 min-h-[2.75rem] flex items-center mb-1.5 leading-snug">
                     {module.title}
                   </h3>
 
-                  {/* Module Description (Concise, uniform 40px height) */}
-                  <p className="text-xs sm:text-[13px] text-slate-600 line-clamp-2 min-h-[2.5rem] leading-relaxed mb-4">
+                  {/* Module Description (Max 2 lines, clean ellipsis) */}
+                  <p className="text-xs text-slate-600 line-clamp-2 min-h-[2rem] leading-relaxed mb-3">
                     {module.purpose}
                   </p>
 
                   {/* 3 Key Capabilities with Checkmarks */}
-                  <div className="space-y-2 mb-5">
+                  <div className="space-y-1.5 mb-4">
                     {topCapabilities.map((feat, fIdx) => (
                       <div key={fIdx} className="flex items-start text-xs text-slate-700">
                         <Check className="w-3.5 h-3.5 text-emerald-600 mr-2 mt-0.5 flex-shrink-0" />
@@ -181,19 +262,19 @@ export const ModulesSection = () => {
                 </div>
 
                 {/* Card Footer: Aligned at Bottom */}
-                <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                <div className="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                   <button
                     type="button"
                     onClick={() => setSelectedModalModule(module)}
                     className="inline-flex items-center font-semibold text-primary-blue hover:text-navy group/link transition-colors focus:outline-none"
                   >
                     <span>Explore Module</span>
-                    <ArrowRight className="w-3.5 h-3.5 ml-1 transition-transform group-hover/link:translate-x-1" />
+                    <ArrowRight className="w-3.5 h-3.5 ml-1 transition-transform group-hover/link:translate-x-0.5" />
                   </button>
 
                   <a
                     href="#lifecycle"
-                    className="text-slate-400 hover:text-primary-blue flex items-center gap-1 transition-colors"
+                    className="text-slate-400 hover:text-primary-blue flex items-center gap-0.5 transition-colors"
                   >
                     <span>View Workflow</span>
                     <ChevronRight className="w-3 h-3" />
