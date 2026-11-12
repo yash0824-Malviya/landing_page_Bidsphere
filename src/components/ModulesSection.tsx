@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from '../animations/motion-shim';
 import { modulesData } from '../data/modulesData';
 import { ModuleItem } from '../types';
 import { 

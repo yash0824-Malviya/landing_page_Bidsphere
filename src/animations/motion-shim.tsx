@@ -68,7 +68,15 @@ export const motion = new Proxy({} as any, {
   },
 });
 
-export const AnimatePresence = ({ children }: { children?: React.ReactNode }) => {
+export interface AnimatePresenceProps {
+  children?: React.ReactNode;
+  mode?: 'sync' | 'wait' | 'popLayout' | string;
+  initial?: boolean;
+  onExitComplete?: () => void;
+  custom?: any;
+}
+
+export const AnimatePresence: React.FC<AnimatePresenceProps> = ({ children }) => {
   return <>{children}</>;
 };
 
@@ -97,3 +105,4 @@ export const useMotionValue = (init: any) => ({
   onChange: () => () => {},
 });
 export const useMotionTemplate = () => '';
+

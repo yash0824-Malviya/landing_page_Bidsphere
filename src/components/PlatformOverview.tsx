@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from '../animations/motion-shim';
 import { 
   Network, 
   Cpu, 

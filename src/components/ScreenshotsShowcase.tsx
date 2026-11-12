@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from '../animations/motion-shim';
 import { productScreenshots } from '../data/screenshotsData';
 import {
   Maximize2,
@@ -208,7 +208,7 @@ export const ScreenshotsShowcase = () => {
               exit={{ scale: 0.94, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 350, damping: 28 }}
               className="relative max-w-6xl w-full max-h-[92vh] flex flex-col items-center justify-center"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
             >
               {/* Modal Top Bar */}
               <div className="w-full flex items-center justify-between pb-3 text-white text-xs sm:text-sm">

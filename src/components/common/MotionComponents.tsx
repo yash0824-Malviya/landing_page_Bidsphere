@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from '../../animations/motion-shim';
 import { ArrowUp } from 'lucide-react';
 import { fadeInUp, springGentle } from '../../animations/variants';
 import ScrollProgressBar from './ScrollProgressBar';

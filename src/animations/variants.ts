@@ -1,4 +1,4 @@
-import { Variants } from 'framer-motion';
+import { Variants } from './motion-shim';
 
 // ============================================================================
 // Enterprise Spring Transitions & Easing Curves

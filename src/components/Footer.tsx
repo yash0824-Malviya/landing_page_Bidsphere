@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from '../animations/motion-shim';
 import { ShieldCheck, ArrowUp, ArrowRight } from 'lucide-react';
 
 export const Footer = () => {

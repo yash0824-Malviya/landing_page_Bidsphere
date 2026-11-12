@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from '../animations/motion-shim';
 import { X, CheckCircle2, Calendar, Clock, ShieldCheck, ArrowRight, Sparkles, Loader2 } from 'lucide-react';
 
 interface DemoModalProps {
@@ -74,7 +74,7 @@ export const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
             exit={{ scale: 0.94, opacity: 0, y: 16 }}
             transition={{ type: 'spring', stiffness: 350, damping: 28 }}
             className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
             {/* Modal Top Bar */}
             <div className="bg-slate-900 text-white p-6 flex items-center justify-between">
