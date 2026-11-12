@@ -58,7 +58,7 @@ export const productScreenshots: ProductScreenshot[] = [
     title: 'PO & Contract Relationship Verification',
     category: 'Execution & Purchasing',
     description: 'Tight integration between transactional Purchase Orders and Master Services Agreements, ensuring full commercial compliance.',
-    imageSrc: '/po28-linked-contract-supplier.png',
+    imageSrc: '/contract-details-apex-fasteners.jpg',
     highlights: [
       '3-way match ready line-item binding',
       'Automated price ceiling validation against contract',
