@@ -13,6 +13,7 @@ import { AboutNetlink } from './components/AboutNetlink';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { DemoModal } from './components/DemoModal';
+import { ScrollProgressBar, BackToTopButton } from './components/common/MotionComponents';
 
 export default function App() {
   const [demoModalOpen, setDemoModalOpen] = useState(false);
@@ -27,6 +28,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-brand-bg text-navy-800 font-sans selection:bg-primary-blue selection:text-white">
+      {/* Top Reading/Scroll Progress Indicator */}
+      <ScrollProgressBar />
+
       {/* Sticky Enterprise Navigation */}
       <Navbar onRequestDemo={handleOpenDemo} />
 
@@ -71,6 +75,8 @@ export default function App() {
 
       {/* Interactive Request a Demo Modal */}
       <DemoModal isOpen={demoModalOpen} onClose={handleCloseDemo} />
+      {/* Floating Back to Top Button */}
+      <BackToTopButton />
     </div>
   );
 }

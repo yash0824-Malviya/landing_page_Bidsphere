@@ -1,5 +1,6 @@
 import React from 'react';
-import { ShieldCheck, ArrowUp } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ShieldCheck, ArrowUp, ArrowRight } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const scrollToTop = () => {
@@ -7,7 +8,13 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-navy text-white pt-16 pb-12 border-t border-slate-800">
+    <motion.footer 
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.6 }}
+      className="bg-navy text-white pt-16 pb-12 border-t border-slate-800"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800">
           {/* Col 1: Brand Info */}
@@ -48,13 +55,13 @@ export const Footer: React.FC = () => {
               Core Modules
             </h4>
             <ul className="space-y-2.5 text-xs text-slate-400">
-              <li><a href="#modules" className="hover:text-white transition-colors">Business Intake & Triage</a></li>
-              <li><a href="#modules" className="hover:text-white transition-colors">Engineering ECR & BOMs</a></li>
-              <li><a href="#modules" className="hover:text-white transition-colors">Business Case & CapEx ROI</a></li>
-              <li><a href="#modules" className="hover:text-white transition-colors">Strategic Sourcing & RFQs</a></li>
-              <li><a href="#modules" className="hover:text-white transition-colors">Supplier Collaboration Portal</a></li>
-              <li><a href="#modules" className="hover:text-white transition-colors">Contract Lifecycle (CLM)</a></li>
-              <li><a href="#modules" className="hover:text-white transition-colors">Command Center Cockpit</a></li>
+              <li><a href="#modules" className="hover:text-white hover:translate-x-1 inline-block transition-all">Business Intake & Triage</a></li>
+              <li><a href="#modules" className="hover:text-white hover:translate-x-1 inline-block transition-all">Engineering ECR & BOMs</a></li>
+              <li><a href="#modules" className="hover:text-white hover:translate-x-1 inline-block transition-all">Business Case & CapEx ROI</a></li>
+              <li><a href="#modules" className="hover:text-white hover:translate-x-1 inline-block transition-all">Strategic Sourcing & RFQs</a></li>
+              <li><a href="#modules" className="hover:text-white hover:translate-x-1 inline-block transition-all">Supplier Collaboration Portal</a></li>
+              <li><a href="#modules" className="hover:text-white hover:translate-x-1 inline-block transition-all">Contract Lifecycle (CLM)</a></li>
+              <li><a href="#modules" className="hover:text-white hover:translate-x-1 inline-block transition-all">Command Center Cockpit</a></li>
             </ul>
           </div>
 
@@ -64,12 +71,12 @@ export const Footer: React.FC = () => {
               Intelligence & Governance
             </h4>
             <ul className="space-y-2.5 text-xs text-slate-400">
-              <li><a href="#ai-intelligence" className="hover:text-white transition-colors">AI Recommendation Model</a></li>
-              <li><a href="#ai-intelligence" className="hover:text-white transition-colors">Multi-Criteria 35/25/30/10</a></li>
-              <li><a href="#lifecycle" className="hover:text-white transition-colors">17-Step Procurement Journey</a></li>
-              <li><a href="#lifecycle" className="hover:text-white transition-colors">Zero Department Head Rule</a></li>
-              <li><a href="#roles" className="hover:text-white transition-colors">Cross-Functional Roles</a></li>
-              <li><a href="#showcase" className="hover:text-white transition-colors">Product Screen Gallery</a></li>
+              <li><a href="#ai-intelligence" className="hover:text-white hover:translate-x-1 inline-block transition-all">AI Recommendation Model</a></li>
+              <li><a href="#ai-intelligence" className="hover:text-white hover:translate-x-1 inline-block transition-all">Multi-Criteria 35/25/30/10</a></li>
+              <li><a href="#lifecycle" className="hover:text-white hover:translate-x-1 inline-block transition-all">17-Step Procurement Journey</a></li>
+              <li><a href="#lifecycle" className="hover:text-white hover:translate-x-1 inline-block transition-all">Zero Department Head Rule</a></li>
+              <li><a href="#roles" className="hover:text-white hover:translate-x-1 inline-block transition-all">Cross-Functional Roles</a></li>
+              <li><a href="#showcase" className="hover:text-white hover:translate-x-1 inline-block transition-all">Product Screen Gallery</a></li>
             </ul>
           </div>
 
@@ -79,11 +86,11 @@ export const Footer: React.FC = () => {
               Netlink Corporate
             </h4>
             <ul className="space-y-2.5 text-xs text-slate-400">
-              <li><a href="#about-netlink" className="hover:text-white transition-colors">About Netlink Software</a></li>
-              <li><a href="#about-netlink" className="hover:text-white transition-colors">25+ Years Experience</a></li>
-              <li><a href="#contact" className="hover:text-white transition-colors">Global Delivery Centers</a></li>
-              <li><a href="#contact" className="hover:text-white transition-colors">Enterprise Support SLAs</a></li>
-              <li><a href="#contact" className="hover:text-white transition-colors">Request a Consultation</a></li>
+              <li><a href="#about-netlink" className="hover:text-white hover:translate-x-1 inline-block transition-all">About Netlink Software</a></li>
+              <li><a href="#about-netlink" className="hover:text-white hover:translate-x-1 inline-block transition-all">25+ Years Experience</a></li>
+              <li><a href="#contact" className="hover:text-white hover:translate-x-1 inline-block transition-all">Global Delivery Centers</a></li>
+              <li><a href="#contact" className="hover:text-white hover:translate-x-1 inline-block transition-all">Enterprise Support SLAs</a></li>
+              <li><a href="#contact" className="hover:text-white hover:translate-x-1 inline-block transition-all">Request a Consultation</a></li>
             </ul>
           </div>
         </div>
@@ -91,23 +98,25 @@ export const Footer: React.FC = () => {
         {/* Bottom Copyright & Back to Top */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
           <div>
-            © {new Date().getFullYear()} Netlink Software Private Limited. All rights reserved. BidSphere is a registered product trademark of Netlink Software.
+            © {new Date().getFullYear()} Netlink Software Private Limited. All rights reserved. BidSphere is a registered trademark of Netlink Software.
           </div>
 
           <div className="flex items-center space-x-6">
-            <span className="hover:text-white cursor-pointer">Security & Privacy Policy</span>
-            <span className="hover:text-white cursor-pointer">Terms of Service</span>
-            <button
+            <span className="hover:text-white cursor-pointer transition-colors">Security & Privacy Policy</span>
+            <span className="hover:text-white cursor-pointer transition-colors">Terms of Service</span>
+            <motion.button
+              type="button"
               onClick={scrollToTop}
+              whileHover={{ scale: 1.1, y: -2 }}
+              whileTap={{ scale: 0.95 }}
               className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
               title="Back to Top"
             >
               <ArrowUp className="w-4 h-4" />
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
-    </footer>
+    </motion.footer>
   );
 };
-

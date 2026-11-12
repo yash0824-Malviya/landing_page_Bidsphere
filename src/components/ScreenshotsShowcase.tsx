@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { productScreenshots } from '../data/screenshotsData';
 import { 
   Maximize2, 
@@ -9,14 +10,38 @@ import {
   Laptop, 
   Layers, 
   FileText,
-  X
+  X,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
+import { ScrollReveal } from './common/MotionComponents';
 
 export const ScreenshotsShowcase: React.FC = () => {
-  const [selectedShotId, setSelectedShotId] = useState<string>('supplier-dashboard');
-  const [modalImage, setModalImage] = useState<string | null>(null);
+  const [selectedShotIndex, setSelectedShotIndex] = useState<number>(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
 
-  const activeShot = productScreenshots.find((s) => s.id === selectedShotId) || productScreenshots[0];
+  const activeShot = productScreenshots[selectedShotIndex] || productScreenshots[0];
+
+  const handlePrev = useCallback(() => {
+    setSelectedShotIndex((prev) => (prev === 0 ? productScreenshots.length - 1 : prev - 1));
+  }, []);
+
+  const handleNext = useCallback(() => {
+    setSelectedShotIndex((prev) => (prev === productScreenshots.length - 1 ? 0 : prev + 1));
+  }, []);
+
+  // Keyboard navigation for Lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isLightboxOpen) return;
+      if (e.key === 'Escape') setIsLightboxOpen(false);
+      if (e.key === 'ArrowLeft') handlePrev();
+      if (e.key === 'ArrowRight') handleNext();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isLightboxOpen, handlePrev, handleNext]);
 
   return (
     <section id="showcase" className="py-20 md:py-28 bg-navy text-white relative overflow-hidden">
@@ -26,7 +51,7 @@ export const ScreenshotsShowcase: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-14">
+        <ScrollReveal className="text-center max-w-3xl mx-auto space-y-4 mb-14">
           <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-blue-500/10 text-primary-blue-200 border border-primary-blue/30 text-xs font-semibold uppercase tracking-wider">
             <Laptop className="w-3.5 h-3.5" />
             <span>Actual Product Interface</span>
@@ -39,33 +64,40 @@ export const ScreenshotsShowcase: React.FC = () => {
           <p className="text-base sm:text-lg text-slate-300 leading-relaxed">
             Experience the real BidSphere enterprise interface — built for speed, transparency, and effortless cross-functional execution.
           </p>
-        </div>
+        </ScrollReveal>
 
-        {/* Tab Selector for Screenshots */}
+        {/* Tab Selector for Screenshots with Animated Spring Pill */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
-          {productScreenshots.map((shot) => {
-            const isSelected = shot.id === selectedShotId;
+          {productScreenshots.map((shot, idx) => {
+            const isSelected = idx === selectedShotIndex;
 
             return (
               <button
                 key={shot.id}
-                onClick={() => setSelectedShotId(shot.id)}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                onClick={() => setSelectedShotIndex(idx)}
+                className={`relative px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors ${
                   isSelected
-                    ? 'bg-primary-blue text-white shadow-glow'
+                    ? 'text-white'
                     : 'bg-slate-800/80 hover:bg-slate-800 text-slate-300 border border-slate-700/80'
                 }`}
               >
-                {shot.title}
+                {isSelected && (
+                  <motion.div
+                    layoutId="screenshot-tab-indicator"
+                    className="absolute inset-0 bg-primary-blue rounded-xl shadow-glow -z-0"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{shot.title}</span>
               </button>
             );
           })}
         </div>
 
-        {/* Realistic Laptop Shell Preview */}
+        {/* Realistic Laptop Shell Preview with Framer Motion Reveal */}
         <div className="max-w-5xl mx-auto">
           <div className="bg-slate-950 rounded-2xl p-2 sm:p-3 border border-slate-700/80 shadow-2xl relative group">
-            {/* Top Display Camera Notch */}
+            {/* Top Display Camera Notch & Mock Browser Bar */}
             <div className="flex items-center justify-between px-3 py-2 bg-slate-900/90 rounded-t-xl border-b border-slate-800">
               <div className="flex items-center space-x-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
@@ -76,23 +108,31 @@ export const ScreenshotsShowcase: React.FC = () => {
                 bidsphere.netlink.com/app/{activeShot.id}
               </div>
               <button
-                onClick={() => setModalImage(activeShot.imageSrc)}
-                className="text-xs text-slate-400 hover:text-white flex items-center space-x-1"
-                title="Expand Fullscreen"
+                type="button"
+                onClick={() => setIsLightboxOpen(true)}
+                className="text-xs text-slate-400 hover:text-white flex items-center space-x-1 p-1 rounded hover:bg-slate-800 transition-colors"
+                title="Expand Fullscreen Lightbox"
               >
                 <Maximize2 className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Fullscreen</span>
+                <span className="hidden sm:inline">Fullscreen Lightbox</span>
               </button>
             </div>
 
-            {/* Screenshot Viewport */}
-            <div className="relative overflow-hidden bg-slate-900 rounded-b-xl max-h-[560px] flex items-center justify-center">
-              <img
-                src={activeShot.imageSrc}
-                alt={activeShot.title}
-                className="w-full h-auto object-contain cursor-zoom-in transition-transform duration-300 group-hover:scale-[1.01]"
-                onClick={() => setModalImage(activeShot.imageSrc)}
-              />
+            {/* Screenshot Viewport with Smooth Image Fade Transitions */}
+            <div className="relative overflow-hidden bg-slate-900 rounded-b-xl min-h-[340px] max-h-[560px] flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={activeShot.id}
+                  src={activeShot.imageSrc}
+                  alt={activeShot.title}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full h-auto object-contain cursor-zoom-in transition-transform duration-300 group-hover:scale-[1.01]"
+                  onClick={() => setIsLightboxOpen(true)}
+                />
+              </AnimatePresence>
 
               <div className="absolute bottom-4 right-4 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/80 text-xs font-semibold text-white flex items-center space-x-1.5 shadow-lg">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -102,63 +142,150 @@ export const ScreenshotsShowcase: React.FC = () => {
           </div>
 
           {/* Screenshot Explanatory Description & Callout Highlights */}
-          <div className="mt-8 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 sm:p-8 backdrop-blur-md">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-              <div>
-                <span className="px-2.5 py-0.5 rounded text-xs font-semibold bg-primary-blue/20 text-primary-blue-200 border border-primary-blue/30">
-                  {activeShot.category}
-                </span>
-                <h3 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                  {activeShot.title}
-                </h3>
-              </div>
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 self-start md:self-auto">
-                {activeShot.badge}
-              </span>
-            </div>
-
-            <p className="text-sm sm:text-base text-slate-300 mt-4 leading-relaxed">
-              {activeShot.description}
-            </p>
-
-            {/* Highlights Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
-              {activeShot.highlights.map((high, idx) => (
-                <div
-                  key={idx}
-                  className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center space-x-2 text-xs text-slate-300"
-                >
-                  <CheckCircle2 className="w-4 h-4 text-primary-blue flex-shrink-0" />
-                  <span>{high}</span>
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={activeShot.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.25 }}
+              className="mt-8 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 sm:p-8 backdrop-blur-md"
+            >
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                <div>
+                  <span className="px-2.5 py-0.5 rounded text-xs font-semibold bg-primary-blue/20 text-primary-blue-200 border border-primary-blue/30">
+                    {activeShot.category}
+                  </span>
+                  <h3 className="text-xl sm:text-2xl font-bold text-white mt-1">
+                    {activeShot.title}
+                  </h3>
                 </div>
-              ))}
-            </div>
-          </div>
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 self-start md:self-auto">
+                  {activeShot.badge}
+                </span>
+              </div>
+
+              <p className="text-sm sm:text-base text-slate-300 mt-4 leading-relaxed">
+                {activeShot.description}
+              </p>
+
+              {/* Highlights Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+                {activeShot.highlights.map((high, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center space-x-2 text-xs text-slate-300"
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-primary-blue flex-shrink-0" />
+                    <span>{high}</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
 
-      {/* Fullscreen Zoom Modal */}
-      {modalImage && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
-          onClick={() => setModalImage(null)}
-        >
-          <div className="relative max-w-6xl max-h-[90vh] overflow-auto rounded-2xl border border-slate-700 bg-slate-900 p-2">
-            <button
-              onClick={() => setModalImage(null)}
-              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/60 text-white hover:bg-black/90 transition-colors"
+      {/* =========================================================================
+          10. SCREENSHOT GALLERY LIGHTBOX MODAL
+          - Keyboard navigation (Left, Right, Escape)
+          - Previous / Next buttons
+          - Smooth spring modal entrance
+          - Maintained aspect ratio
+          ========================================================================= */}
+      <AnimatePresence>
+        {isLightboxOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+            onClick={() => setIsLightboxOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.94, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.94, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+              className="relative max-w-6xl w-full max-h-[92vh] flex flex-col items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
             >
-              <X className="w-6 h-6" />
-            </button>
-            <img
-              src={modalImage}
-              alt="BidSphere Full View"
-              className="w-full h-auto rounded-xl object-contain"
-            />
-          </div>
-        </div>
-      )}
+              {/* Modal Top Bar */}
+              <div className="w-full flex items-center justify-between pb-3 text-white text-xs sm:text-sm">
+                <span className="font-semibold text-slate-300 font-mono">
+                  {activeShot.title} ({selectedShotIndex + 1} of {productScreenshots.length})
+                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-slate-400 hidden sm:inline">Press ESC to close</span>
+                  <button
+                    type="button"
+                    onClick={() => setIsLightboxOpen(false)}
+                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                    aria-label="Close Lightbox"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Main Lightbox Image Viewport */}
+              <div className="relative w-full overflow-hidden rounded-2xl border border-slate-700 bg-slate-950 flex items-center justify-center max-h-[75vh]">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={activeShot.id}
+                    src={activeShot.imageSrc}
+                    alt={activeShot.title}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.2 }}
+                    className="w-full h-auto max-h-[75vh] object-contain rounded-xl"
+                  />
+                </AnimatePresence>
+
+                {/* Left Navigation Arrow */}
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  className="absolute left-3 p-3 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 transition-all hover:scale-105"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+
+                {/* Right Navigation Arrow */}
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="absolute right-3 p-3 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 transition-all hover:scale-105"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Bottom Thumbnail Strip for Fast Switching */}
+              <div className="flex items-center gap-2 mt-4 overflow-x-auto max-w-full py-1">
+                {productScreenshots.map((shot, idx) => (
+                  <button
+                    key={shot.id}
+                    type="button"
+                    onClick={() => setSelectedShotIndex(idx)}
+                    className={`w-14 h-9 rounded-md overflow-hidden border-2 transition-all flex-shrink-0 ${
+                      idx === selectedShotIndex
+                        ? 'border-primary-blue scale-105 ring-2 ring-primary-blue/30'
+                        : 'border-slate-700 opacity-60 hover:opacity-100'
+                    }`}
+                  >
+                    <img src={shot.imageSrc} alt={shot.title} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
-
