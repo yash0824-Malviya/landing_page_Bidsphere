@@ -73,7 +73,7 @@ export default function App() {
 
         {/* Section 7 / 8: Actual Product Screenshots Showcase */}
         <ErrorBoundary componentName="ScreenshotsShowcase">
-          <ScreenshotsShowcase onRequestDemo={handleOpenDemo} />
+          <ScreenshotsShowcase />
         </ErrorBoundary>
 
         {/* Module 10: Procurement Command Center & Analytics Showcase */}
