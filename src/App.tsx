@@ -14,6 +14,7 @@ import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { DemoModal } from './components/DemoModal';
 import { ScrollProgressBar, BackToTopButton } from './components/common/MotionComponents';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 export default function App() {
   const [demoModalOpen, setDemoModalOpen] = useState(false);
@@ -29,54 +30,87 @@ export default function App() {
   return (
     <div className="min-h-screen bg-brand-bg text-navy-800 font-sans selection:bg-primary-blue selection:text-white">
       {/* Top Reading/Scroll Progress Indicator */}
-      <ScrollProgressBar />
+      <ErrorBoundary componentName="ScrollProgressBar">
+        <ScrollProgressBar />
+      </ErrorBoundary>
 
       {/* Sticky Enterprise Navigation */}
-      <Navbar onRequestDemo={handleOpenDemo} />
+      <ErrorBoundary componentName="Navbar">
+        <Navbar onRequestDemo={handleOpenDemo} />
+      </ErrorBoundary>
 
       {/* Main Content Sections */}
       <main>
         {/* Section 2: Hero Section */}
-        <Hero onRequestDemo={handleOpenDemo} />
+        <ErrorBoundary componentName="Hero">
+          <Hero onRequestDemo={handleOpenDemo} />
+        </ErrorBoundary>
 
         {/* Section 3: Platform Overview */}
-        <PlatformOverview />
+        <ErrorBoundary componentName="PlatformOverview">
+          <PlatformOverview />
+        </ErrorBoundary>
 
         {/* Section 4: Complete BidSphere Modules (All 10 Modules) */}
-        <ModulesSection />
+        <ErrorBoundary componentName="ModulesSection">
+          <ModulesSection />
+        </ErrorBoundary>
 
         {/* Section 4.6: Dedicated AI-Powered Recommendation Engine Deep Dive */}
-        <AiIntelligenceSection />
+        <ErrorBoundary componentName="AiIntelligenceSection">
+          <AiIntelligenceSection />
+        </ErrorBoundary>
 
         {/* Section 5: Complete Procurement Lifecycle (17-Step Zero Dept Head Journey) */}
-        <LifecycleSection />
+        <ErrorBoundary componentName="LifecycleSection">
+          <LifecycleSection />
+        </ErrorBoundary>
 
         {/* Section 6: Role-Based Workflow and Collaboration */}
-        <RolesSection />
+        <ErrorBoundary componentName="RolesSection">
+          <RolesSection />
+        </ErrorBoundary>
 
         {/* Section 7 / 8: Actual Product Screenshots Showcase */}
-        <ScreenshotsShowcase />
+        <ErrorBoundary componentName="ScreenshotsShowcase">
+          <ScreenshotsShowcase />
+        </ErrorBoundary>
 
         {/* Module 10: Procurement Command Center & Analytics Showcase */}
-        <CommandCenterPreview />
+        <ErrorBoundary componentName="CommandCenterPreview">
+          <CommandCenterPreview />
+        </ErrorBoundary>
 
         {/* Enterprise Security, Compliance & Governance */}
-        <SecurityCompliance />
+        <ErrorBoundary componentName="SecurityCompliance">
+          <SecurityCompliance />
+        </ErrorBoundary>
 
         {/* About Netlink Software Private Limited */}
-        <AboutNetlink />
+        <ErrorBoundary componentName="AboutNetlink">
+          <AboutNetlink />
+        </ErrorBoundary>
 
         {/* Contact & Consultation Scheduling */}
-        <ContactSection onRequestDemo={handleOpenDemo} />
+        <ErrorBoundary componentName="ContactSection">
+          <ContactSection onRequestDemo={handleOpenDemo} />
+        </ErrorBoundary>
       </main>
 
       {/* Enterprise Footer */}
-      <Footer />
+      <ErrorBoundary componentName="Footer">
+        <Footer />
+      </ErrorBoundary>
 
       {/* Interactive Request a Demo Modal */}
-      <DemoModal isOpen={demoModalOpen} onClose={handleCloseDemo} />
+      <ErrorBoundary componentName="DemoModal">
+        <DemoModal isOpen={demoModalOpen} onClose={handleCloseDemo} />
+      </ErrorBoundary>
+
       {/* Floating Back to Top Button */}
-      <BackToTopButton />
+      <ErrorBoundary componentName="BackToTopButton">
+        <BackToTopButton />
+      </ErrorBoundary>
     </div>
   );
 }

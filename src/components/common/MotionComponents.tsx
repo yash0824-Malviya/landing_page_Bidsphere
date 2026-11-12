@@ -1,20 +1,73 @@
 import React, { useRef, useState, useEffect } from 'react';
-import {
-  motion,
-  useScroll,
-  useSpring,
-  useReducedMotion,
-  useInView,
-  AnimatePresence
-} from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 import { fadeInUp, springGentle } from '../../animations/variants';
-import ScrollProgressBarDefault, { ScrollProgressBar } from './ScrollProgressBar';
+import ScrollProgressBar from './ScrollProgressBar';
 
 // ============================================================================
 // 1. Thin Scroll Progress Indicator (Section 15 D)
 // ============================================================================
 export { ScrollProgressBar };
+
+// ============================================================================
+// Robust Web API Hooks (Replaces fragile internal library hooks)
+// ============================================================================
+export function usePrefersReducedMotion(): boolean {
+  const [prefersReduced, setPrefersReduced] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReduced(mediaQuery.matches);
+
+    const onChange = (event: MediaQueryListEvent) => {
+      setPrefersReduced(event.matches);
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', onChange);
+      return () => mediaQuery.removeEventListener('change', onChange);
+    }
+  }, []);
+
+  return prefersReduced;
+}
+
+export function useElementInView(
+  ref: React.RefObject<Element | null>,
+  options: { once?: boolean; margin?: string } = {}
+): boolean {
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current || typeof IntersectionObserver === 'undefined') {
+      setIsInView(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          if (options.once) {
+            observer.disconnect();
+          }
+        } else if (!options.once) {
+          setIsInView(false);
+        }
+      },
+      {
+        rootMargin: options.margin || '0px',
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [ref, options.once, options.margin]);
+
+  return isInView;
+}
 
 // ============================================================================
 // 2. Scroll Reveal Component (Section 2 & 13)
@@ -34,7 +87,7 @@ export const ScrollReveal = ({
   duration = 0.5,
   yOffset = 24,
 }: ScrollRevealProps) => {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   if (prefersReducedMotion) {
     return <div className={className}>{children}</div>;
@@ -77,7 +130,7 @@ export const SpotlightCard = ({
   const divRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState<number>(0);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!divRef.current || prefersReducedMotion) return;
@@ -142,7 +195,7 @@ export const MagneticButton = ({
 }: MagneticButtonProps) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [offset, setOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!buttonRef.current || prefersReducedMotion) return;
@@ -195,9 +248,9 @@ export const AnimatedCounter = ({
   className = '',
 }: AnimatedCounterProps) => {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
+  const inView = useElementInView(ref, { once: true, margin: '-40px' });
   const [displayValue, setDisplayValue] = useState<string>(typeof value === 'string' ? value : '0');
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     if (!inView || prefersReducedMotion) {
@@ -206,7 +259,6 @@ export const AnimatedCounter = ({
     }
 
     const strVal = String(value);
-    // Extract prefix, numeric portion, and suffix
     const match = strVal.match(/^([^0-9.]*)([0-9.,]+)(.*)$/);
     if (!match) {
       setDisplayValue(strVal);
@@ -233,7 +285,6 @@ export const AnimatedCounter = ({
     const updateCounter = (currentTime: number) => {
       if (!startTime) startTime = currentTime;
       const progress = Math.min((currentTime - startTime) / (duration * 1000), 1);
-      // Ease out cubic
       const easedProgress = 1 - Math.pow(1 - progress, 3);
       const currentNum = targetNum * easedProgress;
 
@@ -287,21 +338,19 @@ export const BackToTopButton = () => {
     <AnimatePresence>
       {visible && (
         <motion.button
-          type="button"
-          onClick={scrollToTop}
-          initial={{ opacity: 0, y: 16, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 16, scale: 0.9 }}
-          whileHover={{ scale: 1.08, y: -2 }}
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: 20 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+          whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.95 }}
-          transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-          className="fixed bottom-6 right-6 z-40 p-3 rounded-xl bg-white/95 text-navy border border-slate-200/90 shadow-card hover:shadow-card-hover hover:text-primary-blue hover:border-primary-blue/40 backdrop-blur-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary-blue/40"
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-primary-blue text-white shadow-[0_4px_20px_rgba(20,108,232,0.35)] hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-blue focus:ring-offset-2 flex items-center justify-center group"
           aria-label="Back to top"
         >
-          <ArrowUp className="w-5 h-5" />
+          <ArrowUp className="w-5 h-5 transition-transform group-hover:-translate-y-0.5" />
         </motion.button>
       )}
     </AnimatePresence>
   );
 };
-
