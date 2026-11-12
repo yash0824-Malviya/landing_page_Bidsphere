@@ -45,7 +45,7 @@ export const productScreenshots: ProductScreenshot[] = [
     title: 'Multi-Page Enterprise Contract Viewer',
     category: 'Legal Review',
     description: 'Integrated document viewer with formal formatting, standardized clause library references, and financial schedule bindings.',
-    imageSrc: '/contract-enterprise-preview-desktop.png',
+    imageSrc: '/contract-enterprise-preview-con2026-00010.png',
     highlights: [
       'Dynamic PDF rendering directly in-browser',
       'Legal & finance handoff review tracking',
