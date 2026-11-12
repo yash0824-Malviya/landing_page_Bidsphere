@@ -1,33 +1,20 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { 
-  motion, 
-  useScroll, 
-  useSpring, 
-  useReducedMotion, 
+import {
+  motion,
+  useScroll,
+  useSpring,
+  useReducedMotion,
   useInView,
-  AnimatePresence 
+  AnimatePresence
 } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 import { fadeInUp, springGentle } from '../../animations/variants';
+import ScrollProgressBarDefault, { ScrollProgressBar } from './ScrollProgressBar';
 
 // ============================================================================
 // 1. Thin Scroll Progress Indicator (Section 15 D)
 // ============================================================================
-export const ScrollProgressBar = () => {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 180,
-    damping: 24,
-    restDelta: 0.001,
-  });
-
-  return (
-    <motion.div
-      style={{ scaleX }}
-      className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#146CE8] via-[#38BDF8] to-[#0D56C0] origin-left z-[60] pointer-events-none"
-    />
-  );
-};
+export { ScrollProgressBar };
 
 // ============================================================================
 // 2. Scroll Reveal Component (Section 2 & 13)
